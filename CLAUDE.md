@@ -17,3 +17,7 @@ El usuario habla español. Explicaciones claras y paso a paso.
 - Alemania: DSGVO estricta. Nada de Google Fonts por CDN en producción, mapas embebidos ni
   rastreadores sin consentimiento. Impressum y Datenschutz obligatorios.
 - Commits según se completan tareas de `PLAN.md` (marcar las casillas).
+- La carta vive en `public/js/demo.js`; `node scripts/generar-semilla.mjs` regenera
+  `supabase/semilla.sql`. Cambios de BD en `supabase/esquema.sql` (idempotente).
+- Pruebas sin Supabase real: el SQL se valida con PGlite (simulando `auth`/`storage`) y el panel con
+  un supabase-js falso en memoria que sustituye `vendor/supabase.js` desde Playwright.

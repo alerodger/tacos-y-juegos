@@ -9,7 +9,19 @@
   CE.ajustes = datos.ajustes;
   document.querySelectorAll('.logo img').forEach((img) => { img.alt = datos.ajustes.nombre; });
 
-  const id = new URLSearchParams(location.search).get('j');
+  const params = new URLSearchParams(location.search);
+  if (params.has('ranking')) {
+    sala.innerHTML = `<div class="juego-barra"><a class="boton claro" href="./">← ${CE.t('sala.volver')}</a><h1>🏆 ${CE.t('rk.titulo')}</h1></div><div id="rk"></div>`;
+    const pag = CE.ranking.pagina(document.getElementById('rk'), { premios: datos.premios, juegoInicial: params.get('ranking') });
+    document.addEventListener('idioma', () => {
+      sala.querySelector('.juego-barra a').textContent = `← ${CE.t('sala.volver')}`;
+      sala.querySelector('.juego-barra h1').textContent = `🏆 ${CE.t('rk.titulo')}`;
+      pag.idioma();
+    });
+    CE.aplicarIdioma();
+    return;
+  }
+  const id = params.get('j');
   const juego = CE.catalogo.find((j) => j.id === id && j.listo && CE.juegos[j.id]);
   let activo = null;
 
@@ -17,7 +29,8 @@
     sala.innerHTML = `
       <section class="sala-cabeza">
         ${CE.jefeHtml('saluda')}
-        <div><h1>${CE.t('sala.titulo')}</h1><p>${CE.t('sala.sub')}</p></div>
+        <div><h1>${CE.t('sala.titulo')}</h1><p>${CE.t('sala.sub')}</p>
+          <a class="boton amarillo pequeno" href="?ranking">🏆 ${CE.t('rk.titulo')}</a></div>
       </section>
       ${CE.categoriasJuego.map((c) => `
         <section class="sala-grupo">

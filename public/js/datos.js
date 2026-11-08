@@ -5,26 +5,36 @@ CE.esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<':
 
 CE.precio = (n) => new Intl.NumberFormat(CE.idioma === 'es' ? 'es-ES' : 'de-DE', { style: 'currency', currency: 'EUR' }).format(n);
 
+// Acceso a Supabase por su API REST (sin librerías: la web pública no necesita más)
+CE.api = {
+  get activo() { return Boolean(CE.config.supabaseUrl && CE.config.supabaseKey); },
+  cabeceras() { return { apikey: CE.config.supabaseKey, Authorization: `Bearer ${CE.config.supabaseKey}`, 'Content-Type': 'application/json' }; },
+  async get(ruta) {
+    const r = await fetch(`${CE.config.supabaseUrl}/rest/v1/${ruta}`, { headers: this.cabeceras() });
+    if (!r.ok) throw new Error(`${ruta}: ${r.status}`);
+    return r.json();
+  },
+  async rpc(funcion, args) {
+    const r = await fetch(`${CE.config.supabaseUrl}/rest/v1/rpc/${funcion}`, { method: 'POST', headers: this.cabeceras(), body: JSON.stringify(args) });
+    if (!r.ok) throw new Error(`${funcion}: ${r.status}`);
+    return r.json();
+  },
+};
+
 CE.cargarDatos = async () => {
-  const { supabaseUrl, supabaseKey } = CE.config;
-  if (!supabaseUrl || !supabaseKey) return { ...CE.demo, demo: true };
-  // Se completará en la fase 3 (esquema de Supabase). Si falla, se muestran los de ejemplo.
+  if (!CE.api.activo) return { ...CE.demo, premios: [], demo: true };
   try {
-    const get = async (ruta) => {
-      const r = await fetch(`${supabaseUrl}/rest/v1/${ruta}`, { headers: { apikey: supabaseKey } });
-      if (!r.ok) throw new Error(`${ruta}: ${r.status}`);
-      return r.json();
-    };
-    const [ajustes, categorias, platos, fotos] = await Promise.all([
-      get('ajustes?select=*&id=eq.1'),
-      get('categorias?select=*&order=orden'),
-      get('platos?select=*&visible=eq.true&order=orden'),
-      get('fotos?select=*&order=orden'),
+    const [ajustes, categorias, platos, fotos, premios] = await Promise.all([
+      CE.api.get('ajustes?select=*&id=eq.1'),
+      CE.api.get('categorias?select=*&order=orden'),
+      CE.api.get('platos?select=*&visible=eq.true&order=orden'),
+      CE.api.get('fotos?select=*&order=orden'),
+      CE.api.get('premios?select=*&activo=eq.true&order=orden'),
     ]);
-    return { ajustes: { ...CE.demo.ajustes, ...(ajustes[0] || {}) }, categorias, platos, fotos, demo: false };
+    return { ajustes: { ...CE.demo.ajustes, ...(ajustes[0] || {}) }, categorias, platos, fotos, premios, demo: false };
   } catch (e) {
     console.warn('Supabase no disponible, uso datos de ejemplo', e);
-    return { ...CE.demo, demo: true };
+    return { ...CE.demo, premios: [], demo: true };
   }
 };
 

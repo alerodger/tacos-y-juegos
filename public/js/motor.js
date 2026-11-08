@@ -61,10 +61,12 @@ CE.finPartida = (escenario, { juego, puntos, alOtra }) => {
       <h2>${CE.t('fin.titulo')}</h2>
       <p class="fin-puntos"><b>${puntos}</b> ${CE.t('fin.puntos')}</p>
       <p>${nuevo && puntos > 0 ? `🎉 ${CE.t('fin.record')}` : `${CE.t('fin.mejor')}: <b>${mejor}</b>`}</p>
-      <p class="fin-ranking">🏆 ${CE.t('fin.ranking')}</p>
-      <button class="boton amarillo" type="button">🔁 ${CE.t('fin.otra')}</button>
+      <div class="fin-rk"></div>
+      <button class="boton amarillo" type="button" data-otra>🔁 ${CE.t('fin.otra')}</button>
     </div>`;
-  capa.querySelector('button').addEventListener('click', () => { capa.remove(); alOtra(); });
+  capa.querySelector('[data-otra]').addEventListener('click', () => { capa.remove(); alOtra(); });
   escenario.appendChild(capa);
-  capa.querySelector('button').focus();
+  const conRanking = CE.catalogo?.find((j) => j.id === juego)?.ranking && puntos > 0;
+  if (conRanking && CE.ranking) CE.ranking.formulario(capa.querySelector('.fin-rk'), { juego, puntos });
+  capa.querySelector('[data-otra]').focus();
 };

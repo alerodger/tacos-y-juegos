@@ -13,12 +13,13 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 - [x] **1. Base de la web**: diseño con motivos mexicanos, idiomas ES/DE, portada, carta, galería,
       dónde estamos (con datos de ejemplo mientras no hay Supabase)
 - [x] **2. Juegos (1ª tanda)**: sala de juegos + Ahorcado ES↔DE con la cara del jefe
-- [ ] **3. Supabase**: esquema (ajustes, carta, fotos, puntuaciones, premios), permisos RLS,
-      bucket de fotos
-- [ ] **4. Panel de administración** (`/admin/`): carta, fotos, textos, horario, cara del jefe,
-      código del día, premios, moderar rankings
-- [ ] **5. Rankings** diarios / semanales / mensuales con Instagram, solo con el código del día
-      (así solo puntúa quien está en el local) y consentimiento explícito
+- [x] **1b. Identidad real**: logo, paleta del local, fotos propias y carta completa de TheFork
+- [x] **3. Supabase (preparado, falta crear el proyecto)**: esquema con RLS, bucket de fotos,
+      funciones de ranking y semilla generada desde `demo.js`. Probado con PGlite
+- [x] **4. Panel de administración** (`/admin/`): carta, categorías, fotos, datos y horario, cara
+      del jefe, código del día, premios, premio de la ruleta y moderación del ranking
+- [x] **5. Rankings** diarios / semanales / mensuales con Instagram opcional, código del día y
+      consentimiento explícito
 - [ ] **6. Más juegos**
   - [x] 18+ (con aviso, confirmación de edad y "vale sin alcohol"): *Pirinola toma todo*,
         *Ruleta del jefe*, *Cubilete* (póker de dados), *Yo nunca*, *Verdad o reto*,
@@ -27,18 +28,20 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
         *Adivina la palabra*
   - [ ] Arcade con la cara del jefe y ranking: *Piñata*, *Lluvia de tacos*
   - [ ] Aprender con ranking: *Memoria ES↔DE*, *Quiz de México*
-- [ ] **7. Ventas**: premios que se canjean en la barra (chupito, 2×1 tacos…), "happy hour del
-      juego", enlaces a la carta de bebidas desde los juegos
-- [ ] **8. Legal (obligatorio en Alemania)**: Impressum, Datenschutzerklärung, bases de los
-      sorteos (Teilnahmebedingungen), sin cookies ni recursos de terceros sin consentimiento
+- [ ] **7. Ventas**: [x] enlaces a la carta de bebidas desde los juegos, [x] casilla de premio en
+      la ruleta, [x] premios por ranking; [ ] "happy hour del juego", [ ] QR imprimible de mesa
+- [~] **8. Legal (obligatorio en Alemania)**: plantillas de Impressum, Datenschutzerklärung y
+      Teilnahmebedingungen hechas; faltan los datos del titular y revisión. Sin cookies ni recursos
+      de terceros (tipografías y supabase-js alojados en la web)
 - [ ] **9. Producción**: Cloudflare Pages + dominio de Hostinger (DNS), SMTP propio, cron para que
       Supabase gratis no se pause, entrega de cuentas al cliente
 
 ## Pendiente de conseguir del cliente
 
-- Logo en buena calidad, colores de marca y tipografía (si tienen)
-- Carta completa con precios (PDF o fotos); TheFork bloquea la descarga automática
-- Fotos del local y de los platos (con permiso de uso)
+- Logo en vectorial / alta resolución (ahora solo hay uno de 150 px)
+- Confirmar la carta y las traducciones al español; el "Mole negro" de 40 € en Dips de TheFork
+  parece un error y no se ha incluido
+- Horario real (TheFork no lo indica; ahora pone "desde las 18:00")
+- Permiso de uso de las fotos (ahora hay 5 sacadas de internet/Instagram)
 - Foto de la cara del dueño (con su consentimiento por escrito)
-- Datos para el Impressum (titular, dirección, contacto, USt-IdNr.)
-- Confirmar horario y si reservan por TheFork, teléfono o ambos
+- Datos para el Impressum (titular, contacto, USt-IdNr.)

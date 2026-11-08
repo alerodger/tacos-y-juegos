@@ -1,0 +1,8 @@
+body { background: var(--noche); }
+.legal { max-width: 760px; margin: 0 auto; padding: 40px 16px 80px; }
+.legal h1 { font-size: clamp(2.6rem, 8vw, 3.6rem); }
+.legal h2 { font-family: var(--fuente); font-weight: 800; font-size: 1.2rem; margin-top: 2em; color: var(--vela); letter-spacing: 0; }
+.legal p, .legal li { color: var(--texto-suave); }
+.legal a { color: var(--vela); }
+.rellenar { background: rgba(242, 165, 65, .18); color: #ffd18a; border-radius: 4px; padding: 0 4px; }
+.aviso-plantilla { border: 1px dashed var(--vela); border-radius: 12px; padding: 12px 16px; color: var(--vela); }

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Verwaltung · Administración</title>
+  <meta name="theme-color" content="#0d0a08">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin">
+  <header class="cabecera">
+    <div class="envoltura">
+      <a class="logo" href="../"><img src="../assets/logo.png" alt="" width="56" height="56"></a>
+      <span class="admin-titulo" data-titulo>Admin</span>
+      <div data-idiomas style="margin-left:auto"></div>
+      <button class="boton contorno pequeno" type="button" data-salir hidden>⎋</button>
+    </div>
+  </header>
+  <main class="envoltura" id="admin"></main>
+  <div class="aviso-flotante" id="aviso" role="status" aria-live="polite"></div>
+
+  <script src="../vendor/supabase.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/demo.js"></script>
+  <script src="../js/datos.js"></script>
+  <script src="../js/motor.js"></script>
+  <script src="../js/catalogo.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
