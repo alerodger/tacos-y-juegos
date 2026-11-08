@@ -27,7 +27,7 @@ body.sala .papel-picado { position: relative; z-index: 1; }
 a.ficha:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,.25); }
 .ficha-icono {
   font-size: 2.2rem; width: 62px; height: 62px; flex: 0 0 auto; display: grid; place-items: center;
-  border-radius: 16px; background: var(--talavera); background-size: 40px;
+  border-radius: 16px; background: var(--arena); box-shadow: inset 0 0 0 3px #fff, 0 0 0 2px var(--arena);
 }
 .ficha-texto { flex: 1; min-width: 0; }
 .ficha-texto b { display: block; font-size: 1.08rem; line-height: 1.25; }
@@ -117,3 +117,153 @@ a.ficha:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,.25)
 .ah-teclado button.bien { background: var(--verde); color: #fff; box-shadow: none; }
 .ah-teclado button.mal { background: #e7ddcf; color: #b3a28c; box-shadow: none; text-decoration: line-through; }
 .ah-teclado button:disabled { cursor: default; }
+
+/* ---------- Común de juegos de grupo ---------- */
+.boton.grande { font-size: 1.2rem; padding: .9em 1.8em; }
+.boton.pequeno { font-size: .85rem; padding: .5em 1em; }
+.boton:disabled { opacity: .5; cursor: default; transform: none; }
+.cartas-reglas { margin: 0; font-size: .92rem; color: var(--tinta-suave); max-width: 560px; text-align: center; }
+.cartas-turno { margin: 0; font-size: 1.05rem; text-align: center; }
+.cartas-turno b { color: var(--rosa); font-size: 1.2rem; }
+.cartas-botones { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.pie-beber { margin: 6px 0 0; font-size: .82rem; color: var(--tinta-suave); text-align: center; }
+.pie-beber a { color: var(--rosa); font-weight: 700; }
+.cartas, .pirinola, .ruleta, .cubilete, .dedo, .loteria, .adivina, .jugadores, .edad {
+  display: grid; gap: 14px; justify-items: center; text-align: center;
+}
+
+/* Jugadores */
+.jugadores h2, .edad h2, .cub-titulo { font-family: var(--fuente); font-weight: 800; font-size: 1.5rem; margin: 0; color: var(--mar); }
+.jugadores p { margin: 0; color: var(--tinta-suave); }
+.jug-form { display: flex; gap: 8px; width: 100%; max-width: 420px; }
+.jug-form input {
+  flex: 1; min-width: 0; font: inherit; padding: .7em 1em; border-radius: 999px; border: 2px solid var(--tinta); background: #fff;
+}
+.jug-lista { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.jug-lista li { background: var(--mar); color: #fff; border-radius: 999px; padding: .35em .5em .35em 1em; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.jug-lista button { border: 0; background: rgba(255,255,255,.2); color: #fff; border-radius: 50%; width: 26px; height: 26px; padding: 0; }
+.jug-min { font-size: .88rem; color: var(--chile) !important; }
+
+/* Edad */
+.edad-ico { font-size: 3.5rem; }
+.edad p { margin: 0; max-width: 420px; }
+
+/* Cartas */
+.carta-grande {
+  width: min(100%, 380px); min-height: 260px; border-radius: 22px; background: var(--c); color: #fff;
+  padding: 28px 24px; display: grid; place-items: center; align-content: center; gap: 12px; position: relative;
+  box-shadow: 0 10px 0 rgba(0,0,0,.18), 0 20px 40px rgba(0,0,0,.2);
+  background-image: radial-gradient(circle at 20% 15%, rgba(255,255,255,.18), transparent 40%);
+}
+.carta-grande p { margin: 0; font-size: clamp(1.25rem, 5vw, 1.6rem); font-weight: 700; line-height: 1.3; }
+.carta-tipo { font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 800; background: rgba(0,0,0,.2); padding: .3em .9em; border-radius: 999px; }
+.carta-portada { font-size: 4.5rem; }
+.carta-esquina { position: absolute; bottom: 10px; right: 14px; font-size: 1.4rem; opacity: .5; }
+.carta-grande.gira { animation: voltear .45s ease-out; }
+@keyframes voltear { from { transform: perspective(800px) rotateY(90deg) scale(.9); } }
+
+/* Pirinola */
+.pir-svg { width: min(200px, 50vw); height: auto; filter: drop-shadow(0 12px 10px rgba(0,0,0,.25)); }
+.pir-svg.girando { animation: peonza .18s linear infinite; }
+@keyframes peonza { 0% { transform: rotate(-6deg) scaleX(1); } 50% { transform: rotate(6deg) scaleX(.85); } 100% { transform: rotate(-6deg) scaleX(1); } }
+.pir-cara { font: 400 26px var(--fuente-titulo); fill: #fff; paint-order: stroke; stroke: rgba(0,0,0,.35); stroke-width: 3px; }
+.pir-resultado { margin: 0; font-size: 1.35rem; font-weight: 800; min-height: 1.6em; color: var(--mar); }
+
+/* Ruleta */
+.rul-caja { position: relative; width: min(340px, 82vw); aspect-ratio: 1; }
+.rul-rueda { width: 100%; height: 100%; transition: transform 4.2s cubic-bezier(.15, .7, .15, 1); filter: drop-shadow(0 12px 18px rgba(0,0,0,.3)); }
+.rul-puntero { position: absolute; top: -14px; left: 50%; width: 40px; transform: translateX(-50%); z-index: 2; }
+.rul-resultado { min-height: 3.2em; font-size: 1.3rem; font-weight: 800; color: var(--mar); max-width: 460px; display: grid; place-items: center; }
+.rul-resultado span { font-size: 2rem; }
+.rul-resultado small { display: block; font-size: .85rem; color: var(--rosa); }
+.rul-resultado.promo { background: var(--sol); border-radius: 16px; padding: 10px 16px; color: var(--tinta); }
+
+/* Cubilete */
+.dados { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.dado {
+  width: clamp(52px, 15vw, 72px); aspect-ratio: 1; border-radius: 14px; border: 0; background: #fff; color: var(--c);
+  font: 400 clamp(1.4rem, 6vw, 2rem) var(--fuente-titulo); box-shadow: 0 5px 0 #cdbfa8, inset 0 0 0 3px #eadfcc; padding: 0;
+  transition: transform .15s;
+}
+.dado:disabled { cursor: default; }
+.dado.fijo { background: var(--sol); transform: translateY(-8px); box-shadow: 0 5px 0 #b38f00, inset 0 0 0 3px #e0b800; }
+.dado.rueda { animation: rodar .14s linear infinite; }
+@keyframes rodar { 50% { transform: rotate(15deg) scale(.92); } }
+.cub-mano { margin: 0; font: 400 1.6rem var(--fuente-titulo); color: var(--rosa); min-height: 1.3em; }
+.cub-ayuda { margin: -8px 0 0; font-size: .85rem; color: var(--tinta-suave); }
+.cub-tabla { list-style: none; padding: 0; margin: 0; width: 100%; max-width: 480px; display: grid; gap: 8px; counter-reset: pos; }
+.cub-tabla li {
+  counter-increment: pos; display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center;
+  background: #fff; border-radius: 14px; padding: 10px 14px; text-align: left;
+}
+.cub-tabla li::before { content: counter(pos) '.'; font-weight: 800; color: var(--tinta-suave); grid-row: span 2; }
+.cub-tabla li > span:last-child { grid-column: 3; grid-row: 1; font-weight: 700; color: var(--mar); }
+.cub-tabla li.pierde { background: #ffe1e4; box-shadow: inset 0 0 0 2px var(--chile); }
+.mini-dados { display: flex; gap: 3px; grid-column: 2; }
+.mini-dados i { font: normal 700 .8rem var(--fuente); color: var(--c); background: #f4ece0; border-radius: 5px; padding: 1px 5px; }
+.cub-perdedor { margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--chile); }
+
+/* El dedo del destino */
+.dedo-preguntas { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.dedo-preguntas button { border: 2px solid var(--tinta); background: #fff; border-radius: 999px; padding: .35em .9em; font-weight: 700; font-size: .85rem; }
+.dedo-preguntas button[aria-pressed="true"] { background: var(--tinta); color: #fff; }
+.dedo-zona {
+  position: relative; width: 100%; height: min(60vh, 460px); border-radius: 20px; background: var(--noche);
+  touch-action: none; user-select: none; -webkit-user-select: none; overflow: hidden; display: grid; place-items: center;
+}
+.dedo-ayuda { color: #fff; font-weight: 700; padding: 20px; margin: 0; font-size: 1.1rem; pointer-events: none; }
+.dedo-zona.decidido .dedo-ayuda { color: var(--sol); font-size: 1.5rem; }
+.dedo-circulo {
+  position: absolute; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; background: var(--c);
+  box-shadow: 0 0 0 6px rgba(255,255,255,.25); animation: latir .7s ease-in-out infinite alternate; pointer-events: none;
+}
+.dedo-circulo.ganador { animation: none; transform: scale(1.6); box-shadow: 0 0 0 12px #fff, 0 0 60px 20px var(--c); transition: transform .3s; }
+.dedo-circulo.fuera { opacity: .15; animation: none; transition: opacity .3s; }
+@keyframes latir { to { transform: scale(1.12); } }
+.dedo-lista { margin: 0; min-height: 1.4em; }
+
+/* Lotería */
+.lot-tablero { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; max-width: 460px; }
+.lot-tablero button { border: 0; padding: 0; background: none; position: relative; }
+.lot-carta {
+  display: grid; justify-items: center; align-content: center; gap: 1px; background: #fff; border: 3px solid var(--tinta);
+  border-radius: 10px; padding: 6px 2px; aspect-ratio: 3 / 4; position: relative; width: 100%;
+}
+.lot-carta b { font-size: clamp(.55rem, 2.4vw, .8rem); line-height: 1.1; }
+.lot-carta small { font-size: clamp(.5rem, 2vw, .68rem); color: var(--tinta-suave); line-height: 1.1; }
+.lot-emo { font-size: clamp(1.4rem, 7vw, 2.2rem); line-height: 1.1; }
+.lot-num { position: absolute; top: 2px; left: 5px; font-size: .6rem; font-weight: 800; color: var(--tinta-suave); }
+.lot-tablero button.marcada .lot-carta::after {
+  content: ''; position: absolute; width: 38%; aspect-ratio: 1; border-radius: 50%; top: 14%; right: 8%; opacity: .92;
+  background: radial-gradient(circle at 35% 35%, #c2703d, #6e3415); box-shadow: 0 3px 4px rgba(0,0,0,.35);
+}
+.lot-tablero.completo { animation: pop .4s; }
+.lot-grito { margin: 0; font: 400 2rem var(--fuente-titulo); color: var(--rosa); animation: saltar .5s ease-in-out infinite alternate; }
+.lot-cantar { display: grid; gap: 12px; justify-items: center; }
+.lot-cantar > p { margin: 0; font-weight: 700; color: var(--tinta-suave); }
+.lot-carta.grande { width: min(240px, 60vw); padding: 16px; border-width: 5px; border-radius: 18px; animation: voltear .45s ease-out; }
+.lot-carta.grande b { font-size: 1.6rem; font-family: var(--fuente-titulo); font-weight: 400; }
+.lot-carta.grande small { font-size: 1rem; }
+.lot-carta.grande .lot-emo { font-size: 5rem; }
+.lot-carta.grande .lot-num { font-size: 1rem; top: 6px; left: 10px; }
+.lot-carta.vacia { background: var(--talavera); background-size: 60px; }
+.lot-historial { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; font-size: 1.5rem; opacity: .7; }
+
+/* Adivina la palabra */
+.adv-mazos { display: grid; gap: 10px; width: 100%; max-width: 460px; }
+.adv-mazos .ficha { border: 0; font: inherit; text-align: left; }
+.adivina.jugando { min-height: 60vh; align-content: center; }
+.adv-reloj { font: 400 2rem var(--fuente-titulo); color: var(--mar); }
+.adv-reloj.urgente { color: var(--chile); animation: latir .5s infinite alternate; }
+.adv-palabra { display: grid; gap: 8px; }
+.adv-palabra b { font: 400 clamp(2.4rem, 12vw, 4.5rem) var(--fuente-titulo); color: var(--tinta); line-height: 1.05; }
+.adv-palabra small { font-size: 1.1rem; color: var(--tinta-suave); display: inline-flex; gap: 6px; align-items: center; justify-content: center; }
+.adv-palabra small svg { width: 22px; height: 15px; }
+.adv-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 520px; }
+.adv-botones button { border: 0; border-radius: 18px; padding: 22px 10px; font-size: 1.2rem; font-weight: 800; color: #fff; }
+.adv-paso { background: var(--chile); }
+.adv-ok { background: var(--verde); }
+.adv-lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; text-align: left; max-width: 460px; width: 100%; }
+.adv-lista li { padding: 6px 10px; border-radius: 10px; background: #fff; opacity: .6; }
+.adv-lista li.ok { opacity: 1; }
+.rul-centro { position: absolute; left: 50%; top: 50%; width: 30%; transform: translate(-50%, -50%); filter: drop-shadow(0 4px 6px rgba(0,0,0,.3)); }

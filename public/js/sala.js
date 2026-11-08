@@ -48,7 +48,32 @@
         <h1>${juego.icono} ${esc(CE.tx(juego, 'nombre'))}</h1>
       </div>
       <div class="escenario" id="escenario"></div>`;
-    activo = CE.juegos[juego.id].iniciar(document.getElementById('escenario'));
+    const escenario = document.getElementById('escenario');
+    let mayor = false;
+    try { mayor = localStorage.getItem('ce-18') === 'si'; } catch (e) { /* nada */ }
+    if (juego.cat === 'beber' && !mayor) pedirEdad(escenario);
+    else activo = CE.juegos[juego.id].iniciar(escenario);
+  }
+
+  // Confirmación de mayoría de edad para los juegos de beber
+  function pedirEdad(escenario) {
+    const pintar = () => {
+      escenario.innerHTML = `<div class="edad">
+        <span class="edad-ico">🔞</span>
+        <h2>${CE.t('edad.titulo')}</h2>
+        <p>${CE.t('edad.texto')}</p>
+        <div class="cartas-botones">
+          <button class="boton amarillo" type="button" data-si>${CE.t('edad.si')}</button>
+          <a class="boton contorno" href="./">${CE.t('edad.no')}</a>
+        </div>
+      </div>`;
+      escenario.querySelector('[data-si]').addEventListener('click', () => {
+        try { localStorage.setItem('ce-18', 'si'); } catch (e) { /* nada */ }
+        activo = CE.juegos[juego.id].iniciar(escenario);
+      });
+    };
+    pintar();
+    activo = { idioma: pintar };
   }
 
   document.addEventListener('idioma', () => {

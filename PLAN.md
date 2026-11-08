@@ -20,10 +20,13 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 - [ ] **5. Rankings** diarios / semanales / mensuales con Instagram, solo con el código del día
       (así solo puntúa quien está en el local) y consentimiento explícito
 - [ ] **6. Más juegos**
-  - Arcade con la cara del jefe: *Piñata* (golpear), *Lluvia de tacos* (atrapar)
-  - Aprender: *Memoria ES↔DE*, *Quiz de México*
-  - En grupo: *Lotería* (bingo mexicano, cartas propias), *Adivina la palabra* (móvil en la frente)
-  - 18+ (con aviso y versión sin alcohol): *Yo nunca*, *Verdad o reto*, *Ruleta del jefe*
+  - [x] 18+ (con aviso, confirmación de edad y "vale sin alcohol"): *Pirinola toma todo*,
+        *Ruleta del jefe*, *Cubilete* (póker de dados), *Yo nunca*, *Verdad o reto*,
+        *¿Quién es más probable…?*
+  - [x] En grupo: *El dedo del destino* (¿quién paga la ronda?), *Lotería* (cartas propias ES/DE),
+        *Adivina la palabra*
+  - [ ] Arcade con la cara del jefe y ranking: *Piñata*, *Lluvia de tacos*
+  - [ ] Aprender con ranking: *Memoria ES↔DE*, *Quiz de México*
 - [ ] **7. Ventas**: premios que se canjean en la barra (chupito, 2×1 tacos…), "happy hour del
       juego", enlaces a la carta de bebidas desde los juegos
 - [ ] **8. Legal (obligatorio en Alemania)**: Impressum, Datenschutzerklärung, bases de los

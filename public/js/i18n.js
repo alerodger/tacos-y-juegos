@@ -41,6 +41,14 @@ window.CE = window.CE || {};
       'ahorcado.acierto': '¡Órale! Correcto', 'ahorcado.fallo': '¡Ay, caramba! Era:',
       'ahorcado.siguiente': 'Siguiente palabra', 'ahorcado.terminar': 'Ver resultado',
       'pal.comida': 'Comida', 'pal.bebida': 'Bebida', 'pal.mesa': 'En la mesa', 'pal.frase': 'Frase', 'pal.mexico': 'México',
+      // Común a los juegos de grupo
+      'jug.titulo': '¿Quién juega?', 'jug.sub': 'Escribe los nombres de la mesa. Se guardan para los demás juegos.',
+      'jug.nombre': 'Nombre', 'jug.anadir': 'Añadir', 'jug.quitar': 'Quitar', 'jug.empezar': 'Empezar',
+      'jug.minimo': 'Hacen falta al menos {n} jugadores.', 'jug.cambiar': 'Jugadores', 'jug.turno': 'Le toca a',
+      'beber.resp': 'Cualquier trago vale también sin alcohol', 'beber.carta': '¿Otra ronda? Ver bebidas',
+      'edad.titulo': '¿Tienes 18 años o más?', 'edad.texto': 'Este juego es para adultos. Juega con cabeza y bebe con responsabilidad.',
+      'edad.si': 'Sí, tengo 18+', 'edad.no': 'No, volver',
+      'comun.siguiente': 'Siguiente', 'comun.otra': 'Otra vez', 'comun.reglas': 'Cómo se juega',
     },
     de: {
       'idioma.es': 'Español', 'idioma.de': 'Deutsch', 'idioma.cambiar': 'Sprache wechseln',
@@ -78,6 +86,13 @@ window.CE = window.CE || {};
       'ahorcado.acierto': '¡Órale! Richtig', 'ahorcado.fallo': '¡Ay, caramba! Es war:',
       'ahorcado.siguiente': 'Nächstes Wort', 'ahorcado.terminar': 'Ergebnis ansehen',
       'pal.comida': 'Essen', 'pal.bebida': 'Getränk', 'pal.mesa': 'Am Tisch', 'pal.frase': 'Redewendung', 'pal.mexico': 'Mexiko',
+      'jug.titulo': 'Wer spielt mit?', 'jug.sub': 'Trag die Namen am Tisch ein. Sie bleiben für die anderen Spiele gespeichert.',
+      'jug.nombre': 'Name', 'jug.anadir': 'Hinzufügen', 'jug.quitar': 'Entfernen', 'jug.empezar': 'Los geht’s',
+      'jug.minimo': 'Mindestens {n} Spieler nötig.', 'jug.cambiar': 'Spieler', 'jug.turno': 'Dran ist',
+      'beber.resp': 'Jeder Schluck zählt auch alkoholfrei', 'beber.carta': 'Noch eine Runde? Zur Getränkekarte',
+      'edad.titulo': 'Bist du 18 oder älter?', 'edad.texto': 'Dieses Spiel ist für Erwachsene. Spiel mit Köpfchen und trink verantwortungsvoll.',
+      'edad.si': 'Ja, ich bin 18+', 'edad.no': 'Nein, zurück',
+      'comun.siguiente': 'Weiter', 'comun.otra': 'Nochmal', 'comun.reglas': 'So wird gespielt',
     },
   };
 
@@ -101,6 +116,8 @@ window.CE = window.CE || {};
   // Campo bilingüe de un objeto: tx(plato, 'nombre') → plato.nombre_es / plato.nombre_de
   CE.tx = (o, campo) => (o && (o[`${campo}_${CE.idioma}`] || o[`${campo}_es`] || o[`${campo}_de`])) || '';
   CE.bandera = (l) => BANDERAS[l];
+  // Texto bilingüe en línea: CE.L({ es: 'Hola', de: 'Hallo' })
+  CE.L = (o) => (typeof o === 'string' ? o : o[CE.idioma] ?? o.es);
 
   CE.aplicarIdioma = () => {
     document.documentElement.lang = CE.idioma;

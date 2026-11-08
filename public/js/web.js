@@ -19,6 +19,12 @@
   const datos = await CE.cargarDatos();
   const a = datos.ajustes;
   let catActiva = datos.categorias[0]?.id;
+  // Enlaces del tipo #carta-cocteles abren la carta en esa categoría (los usan los juegos)
+  const desdeHash = location.hash.match(/^#carta-(.+)$/);
+  if (desdeHash && datos.categorias.some((c) => c.id === desdeHash[1])) {
+    catActiva = desdeHash[1];
+    requestAnimationFrame(() => document.getElementById('carta').scrollIntoView());
+  }
 
   // Nombre: la primera palabra en blanco, el resto destacado
   const [n1, ...nResto] = a.nombre.split(' ');
