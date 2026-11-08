@@ -30,7 +30,7 @@ CE.cargarDatos = async () => {
 
 // Banderitas de papel picado: rellena cada [data-papel-picado]
 CE.papelPicado = () => {
-  const colores = ['#e8407c', '#f6a21e', '#0e9aa7', '#2e9e5b', '#d7263d', '#6b3fa0', '#ffd23f'];
+  const colores = ['#d42d3b', '#f4ead9', '#e93d8f', '#2cc4d6', '#f2a541', '#a259ff', '#2e9e5b'];
   const forma = 'M0 0H60V56L55 62L50 56L45 62L40 56L35 62L30 56L25 62L20 56L15 62L10 56L5 62L0 56Z'
     + 'M30 16L39 28L30 40L21 28Z'                                     // rombo central
     + 'M30 22L34 28L30 34L26 28Z'                                     // (vuelve a rellenar el centro)

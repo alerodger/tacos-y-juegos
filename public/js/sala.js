@@ -7,8 +7,7 @@
 
   const datos = await CE.cargarDatos();
   CE.ajustes = datos.ajustes;
-  const [n1, ...nResto] = datos.ajustes.nombre.split(' ');
-  document.querySelectorAll('[data-nombre-logo]').forEach((el) => { el.innerHTML = `${esc(n1)} <span>${esc(nResto.join(' '))}</span>`; });
+  document.querySelectorAll('.logo img').forEach((img) => { img.alt = datos.ajustes.nombre; });
 
   const id = new URLSearchParams(location.search).get('j');
   const juego = CE.catalogo.find((j) => j.id === id && j.listo && CE.juegos[j.id]);

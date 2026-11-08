@@ -5,21 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Quitar "noindex" al pasar a producción con el dominio propio -->
   <meta name="robots" content="noindex, nofollow">
-  <title>Cantina Ensenada · Mexikanisches Restaurant in Passau</title>
-  <meta name="description" content="Mexikanisches Restaurant in der Passauer Innstadt: Tacos, Margaritas, gute Stimmung und Spiele am Tisch.">
-  <meta name="theme-color" content="#0b2a33">
+  <title>Cantina Ensenada · Cocina Mexicana &amp; Tequila Bar · Passau</title>
+  <meta name="description" content="Mexikanisches Restaurant und Tequila Bar in der Passauer Innstadt: Tacos, Mole, Margaritas, über 20 Tequilas und Spiele am Tisch.">
+  <meta name="theme-color" content="#0d0a08">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="fonts/shrikhand.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/bebas.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fotos/barra-catrina.webp" as="image">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/web.css">
 </head>
 <body>
   <header class="cabecera">
     <div class="envoltura">
-      <a class="logo" href="#inicio" data-nombre-logo>Cantina <span>Ensenada</span></a>
+      <a class="logo" href="#inicio"><img src="assets/logo.png" alt="Cantina Ensenada" width="56" height="56" data-nombre-alt></a>
       <button class="nav-boton" type="button" aria-expanded="false" aria-controls="nav" data-i18n-aria="nav.menu">☰</button>
       <nav class="nav" id="nav">
         <a href="#carta" data-i18n="nav.carta">Carta</a>
+        <a href="#tequila" data-i18n="nav.bar">Bar</a>
         <a href="#galeria" data-i18n="nav.galeria">Galería</a>
         <a href="#visitanos" data-i18n="nav.visitanos">Visítanos</a>
         <a href="juegos/" class="destacado">🎲 <span data-i18n="nav.juegos">Juegos</span></a>
@@ -30,69 +32,95 @@
 
   <main>
     <section class="hero" id="inicio">
-      <div class="papel-picado" data-papel-picado="24" aria-hidden="true"></div>
-      <div class="flotan" aria-hidden="true">
-        <span style="left:6%;top:30%">🌮</span>
-        <span style="left:86%;top:24%;animation-delay:-2s">🌶️</span>
-        <span style="left:12%;top:72%;animation-delay:-4s">🍹</span>
-        <span style="left:80%;top:62%;animation-delay:-1s">🥑</span>
-        <span style="left:48%;top:86%;animation-delay:-3s;font-size:2rem">🍋</span>
-      </div>
-      <div class="envoltura">
-        <span class="hero-eyebrow" data-i18n="hero.eyebrow">Cocina mexicana · Passau</span>
-        <h1 data-nombre-titulo>Cantina <span>Ensenada</span></h1>
+      <div class="hero-foto"><img src="assets/fotos/barra-catrina.webp" alt="" fetchpriority="high"></div>
+      <div class="papel-picado" data-papel-picado="30" aria-hidden="true"></div>
+      <div class="envoltura hero-contenido">
+        <h1 class="marca">
+          <svg class="marca-sol" viewBox="0 0 80 46" aria-hidden="true"><g fill="var(--rojo)">
+            <path d="M40 44L37.5 9 40 2l2.5 7Z" transform="rotate(-72 40 44)"/><path d="M40 44L37.5 9 40 2l2.5 7Z" transform="rotate(-48 40 44)"/>
+            <path d="M40 44L37.5 9 40 2l2.5 7Z" transform="rotate(-24 40 44)"/><path d="M40 44L37.5 9 40 2l2.5 7Z"/>
+            <path d="M40 44L37.5 9 40 2l2.5 7Z" transform="rotate(24 40 44)"/><path d="M40 44L37.5 9 40 2l2.5 7Z" transform="rotate(48 40 44)"/>
+            <path d="M40 44L37.5 9 40 2l2.5 7Z" transform="rotate(72 40 44)"/><path d="M27 45a13 13 0 0 1 26 0Z"/></g></svg>
+          <span class="marca-1" data-nombre-1>Cantina</span>
+          <span class="marca-2" data-nombre-2>Ensenada</span>
+          <span class="marca-3" data-eslogan>Cocina mexicana <b>&amp;</b> tequila bar</span>
+        </h1>
         <p class="hero-lema" data-i18n="hero.lema"></p>
         <div class="hero-botones">
+          <a class="boton" href="#" target="_blank" rel="noopener" data-reserva>📅 <span data-i18n="hero.reservar"></span></a>
           <a class="boton amarillo" href="#carta">🌮 <span data-i18n="hero.verCarta"></span></a>
-          <a class="boton" href="juegos/">🎲 <span data-i18n="hero.jugar"></span></a>
-          <a class="boton contorno" href="#" target="_blank" rel="noopener" data-reserva>📅 <span data-i18n="hero.reservar"></span></a>
+          <a class="boton neon" href="juegos/">🎲 <span data-i18n="hero.jugar"></span></a>
         </div>
+        <a class="valoracion" href="#" target="_blank" rel="noopener" data-valoracion hidden></a>
       </div>
-      <svg class="sello" viewBox="0 0 120 120" aria-hidden="true">
-        <defs><path id="circulo" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1 -92 0"/></defs>
-        <circle cx="60" cy="60" r="58" fill="var(--chile)"/>
-        <circle cx="60" cy="60" r="34" fill="none" stroke="var(--sol)" stroke-dasharray="3 4"/>
-        <text><textPath href="#circulo" data-i18n="sello"></textPath></text>
-        <text x="60" y="70" text-anchor="middle" style="font-size:30px;letter-spacing:0">💀</text>
-      </svg>
-      <svg class="hero-ola" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 40C180 70 360 10 540 30S900 70 1080 40 1360 10 1440 30V70H0Z" fill="var(--crema)"/>
-      </svg>
+    </section>
+
+    <section class="seccion" id="imprescindibles">
+      <div class="envoltura">
+        <div class="seccion-cabeza aparece">
+          <span class="antetitulo" data-i18n="dest.ante"></span>
+          <h2 data-i18n="dest.titulo"></h2>
+        </div>
+        <div class="destacados" data-destacados></div>
+      </div>
     </section>
 
     <section class="banda-juegos" id="juegos">
       <div class="envoltura">
         <div class="banda-caja aparece">
-          <h2 data-i18n="banda.titulo"></h2>
+          <span class="antetitulo" data-i18n="banda.ante"></span>
+          <h2 class="neon" data-i18n="banda.titulo"></h2>
           <p data-i18n="banda.texto"></p>
           <div class="banda-tarjetas">
-            <div class="banda-tarjeta" style="--c:var(--cempasuchil)"><span class="ico">🏆</span><b data-i18n="banda.c1t"></b><p data-i18n="banda.c1d"></p></div>
-            <div class="banda-tarjeta" style="--c:var(--rosa)"><span class="ico">📚</span><b data-i18n="banda.c2t"></b><p data-i18n="banda.c2d"></p></div>
-            <div class="banda-tarjeta" style="--c:var(--mar-claro)"><span class="ico">🪅</span><b data-i18n="banda.c3t"></b><p data-i18n="banda.c3d"></p></div>
+            <div class="banda-tarjeta" style="--c:var(--vela)"><span class="ico">🏆</span><b data-i18n="banda.c1t"></b><p data-i18n="banda.c1d"></p></div>
+            <div class="banda-tarjeta" style="--c:var(--rosa)"><span class="ico">🥃</span><b data-i18n="banda.c3t"></b><p data-i18n="banda.c3d"></p></div>
+            <div class="banda-tarjeta" style="--c:var(--cian)"><span class="ico">📚</span><b data-i18n="banda.c2t"></b><p data-i18n="banda.c2d"></p></div>
           </div>
           <a class="boton amarillo" href="juegos/">🎲 <span data-i18n="banda.cta"></span></a>
         </div>
       </div>
     </section>
 
-    <section class="seccion" id="carta">
+    <section class="seccion carta" id="carta">
       <div class="envoltura">
         <div class="seccion-cabeza aparece">
-          <span class="adorno" aria-hidden="true">🌶️🌮🌶️</span>
+          <span class="antetitulo" data-i18n="carta.ante"></span>
           <h2 data-i18n="carta.titulo"></h2>
           <p data-i18n="carta.sub"></p>
         </div>
         <p class="aviso-demo" data-aviso-demo hidden data-i18n="demo.aviso"></p>
+        <div class="carta-grupos" role="group" data-grupos>
+          <button type="button" data-grupo="comida">🌮 <span data-i18n="carta.comida"></span></button>
+          <button type="button" data-grupo="bebida">🍹 <span data-i18n="carta.bebida"></span></button>
+        </div>
         <div class="carta-pestanas" role="tablist" data-pestanas></div>
+        <p class="carta-nota-cat" data-nota-cat hidden></p>
         <div class="carta-lista" data-carta role="tabpanel"></div>
         <p class="carta-nota" data-i18n="carta.alergenos"></p>
       </div>
     </section>
 
-    <section class="seccion galeria" id="galeria">
+    <section class="tequila" id="tequila">
+      <div class="tequila-foto"><img src="assets/fotos/comedor-sombreros.webp" alt="" loading="lazy"></div>
+      <div class="envoltura">
+        <div class="tequila-texto aparece">
+          <span class="antetitulo" data-i18n="bar.ante"></span>
+          <h2><span class="neon" data-i18n="bar.titulo1"></span><br><span class="rojo" data-i18n="bar.titulo2"></span></h2>
+          <p data-i18n="bar.texto"></p>
+          <div class="cifras">
+            <div><b data-cifra-tequilas>20+</b><span data-i18n="bar.c1"></span></div>
+            <div><b data-cifra-cocteles>40+</b><span data-i18n="bar.c2"></span></div>
+            <div><b>6</b><span data-i18n="bar.c3"></span></div>
+          </div>
+          <div><a class="boton" href="#carta" data-ir-carta="cocteles">🍹 <span data-i18n="bar.cta"></span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion" id="galeria">
       <div class="envoltura">
         <div class="seccion-cabeza aparece">
-          <span class="adorno" aria-hidden="true">✨📸✨</span>
+          <span class="antetitulo" data-i18n="galeria.ante"></span>
           <h2 data-i18n="galeria.titulo"></h2>
           <p data-i18n="galeria.sub"></p>
         </div>
@@ -104,20 +132,21 @@
     <section class="seccion" id="visitanos">
       <div class="envoltura">
         <div class="seccion-cabeza aparece">
-          <span class="adorno" aria-hidden="true">📍</span>
+          <span class="antetitulo">📍 Passau · Innstadt</span>
           <h2 data-i18n="visita.titulo"></h2>
         </div>
         <div class="visita-rejilla">
-          <div class="tarjeta aparece" style="--c:var(--rosa)">
+          <div class="tarjeta aparece" style="--c:var(--rojo)">
             <h3 data-i18n="visita.direccion"></h3>
             <p data-direccion></p>
             <a class="boton" href="#" target="_blank" rel="noopener" data-maps>🗺️ <span data-i18n="visita.llegar"></span></a>
           </div>
-          <div class="tarjeta aparece" style="--c:var(--cempasuchil)">
+          <div class="tarjeta aparece" style="--c:var(--vela)">
             <h3 data-i18n="visita.horario"></h3>
             <table class="horario"><tbody data-horario></tbody></table>
+            <small data-i18n="visita.horarioNota"></small>
           </div>
-          <div class="tarjeta aparece" style="--c:var(--mar-claro)">
+          <div class="tarjeta aparece" style="--c:var(--cian)">
             <h3 data-i18n="visita.contacto"></h3>
             <p><a href="#" data-telefono></a></p>
             <a class="boton amarillo" href="#" target="_blank" rel="noopener" data-reserva>📅 <span data-i18n="visita.reservar"></span></a>
@@ -127,13 +156,13 @@
     </section>
   </main>
 
-  <div class="papel-picado" data-papel-picado="24" aria-hidden="true" style="background:var(--noche)"></div>
+  <div class="papel-picado" data-papel-picado="30" aria-hidden="true" style="background:#000"></div>
   <footer class="pie">
     <div class="envoltura">
-      <span class="logo" data-nombre-logo>Cantina <span>Ensenada</span></span>
+      <a class="logo" href="#inicio"><img src="assets/logo.png" alt="Cantina Ensenada" width="84" height="84" loading="lazy"></a>
       <nav>
-        <a href="#" data-i18n="pie.impressum"></a>
-        <a href="#" data-i18n="pie.privacidad"></a>
+        <a href="legal/impressum.html" data-i18n="pie.impressum"></a>
+        <a href="legal/datenschutz.html" data-i18n="pie.privacidad"></a>
         <a href="juegos/" data-i18n="nav.juegos"></a>
       </nav>
       <span data-i18n="pie.hecho"></span>
