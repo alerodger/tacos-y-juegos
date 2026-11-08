@@ -492,6 +492,18 @@
         <button class="boton" type="submit">💾 ${L('Guardar', 'Speichern')}</button>
       </form>
 
+      <div class="caja-admin qr-admin">
+        <h2>📱 ${L('QR para las mesas', 'QR-Code für die Tische')}</h2>
+        <p class="ayuda">${L('Lleva a la sala de juegos. Imprime los carteles cuando la web ya esté en el dominio definitivo (si cambia la dirección, hay que volver a imprimirlos).',
+          'Führt zum Spielraum. Drucke die Aufsteller erst, wenn die Website unter der endgültigen Domain läuft (ändert sich die Adresse, neu drucken).')}</p>
+        <label>${L('Dirección del QR', 'Adresse im QR-Code')}<input data-qr-url value="${esc(urlJuegos())}"></label>
+        <div class="qr-vista" data-qr-vista>${svgQr(urlJuegos())}</div>
+        <div class="botones-dialogo" style="justify-content:flex-start">
+          <button class="boton" type="button" data-imprimir-qr>🖨️ ${L('Imprimir carteles (4 por A4)', 'Aufsteller drucken (4 pro A4)')}</button>
+          <button class="boton contorno" type="button" data-descargar-qr>⬇️ ${L('Descargar QR (SVG)', 'QR herunterladen (SVG)')}</button>
+        </div>
+      </div>
+
       <form class="form-admin caja-admin" data-form-promo>
         <h2>🎡 ${L('Premio en la ruleta del jefe', 'Preis im Glücksrad vom Chef')}</h2>
         <p class="ayuda">${L('Opcional. Añade una casilla dorada a la ruleta (p. ej. "10 % en la siguiente ronda"). Déjalo vacío para quitarla.',
@@ -516,6 +528,36 @@
         <div data-moderacion><p class="vacio">…</p></div>
       </div>`;
     cargarModeracion();
+  }
+  function urlJuegos() { return new URL('../juegos/', location.href).href; }
+  function svgQr(url) {
+    if (!window.qrcode || !url) return '';
+    const qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+    return qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+  }
+  async function imprimirCarteles(url) {
+    const v = window.open('', '_blank'); // se abre ya, dentro del clic, para que no lo bloquee el navegador
+    let logo = '';
+    try {
+      const blob = await (await fetch(new URL('../assets/logo.png', location.href))).blob();
+      logo = await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(blob); });
+    } catch (e) { /* sin logo */ }
+    const cartel = `<div class="cartel"><img class="logo" src="${logo}" alt="">
+      <h1>¡Juega y gana!<small>Spiel &amp; gewinn!</small></h1>
+      <div class="qr">${svgQr(url)}</div>
+      <p class="juegos">🎲 Pirinola · Cubilete · Lotería · Ruleta del jefe · Ahorcado…</p>
+      <p class="codigo">🔑 Código del día / Code des Tages:<span></span></p>
+      <p class="pie">🏆 Rankings con premios cada semana · Jede Woche Preise · 18+ 🥤</p></div>`;
+    v.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>QR</title><style>
+      @page { size: A4; margin: 8mm; } * { box-sizing: border-box; }
+      body { margin: 0; font-family: system-ui, sans-serif; display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+      .cartel { height: 136mm; border: 1.5px dashed #999; border-radius: 6mm; padding: 6mm; display: flex; flex-direction: column; align-items: center; text-align: center; background: #0d0a08; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .logo { width: 28mm; } h1 { margin: 2mm 0; font-size: 22pt; color: #f2a541; line-height: 1; } h1 small { display: block; font-size: 13pt; color: #fff; }
+      .qr { background: #fff; padding: 3mm; border-radius: 3mm; width: 52mm; } .qr svg { display: block; width: 100%; height: auto; }
+      p { margin: 2mm 0 0; font-size: 9pt; } .codigo span { display: block; margin: 2mm auto 0; width: 45mm; height: 9mm; border: 1.5px solid #f2a541; border-radius: 2mm; background: #fff; }
+      .pie { color: #c9b8a6; font-size: 8pt; margin-top: auto; }
+    </style></head><body>${cartel.repeat(4)}<script>Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => { i.onload = r; i.onerror = r; })))).then(() => setTimeout(() => print(), 200));<\/script></body></html>`);
+    v.document.close();
   }
   function filaPremio(p) {
     return `<div class="premio" data-id="${p.id || ''}">
@@ -549,6 +591,7 @@
   }
   raiz.addEventListener('change', (e) => {
     if (pestana !== 'juegos') return;
+    if (e.target.matches('[data-qr-url]')) $('[data-qr-vista]').innerHTML = svgQr(e.target.value.trim());
     if (e.target.matches('[data-mod-juego]')) { moderar.juego = e.target.value; cargarModeracion(); }
     if (e.target.matches('[data-mod-periodo]')) { moderar.periodo = e.target.value; cargarModeracion(); }
   });
@@ -570,6 +613,12 @@
     if (pestana !== 'juegos') return;
     const b = e.target.closest('button'); if (!b) return;
     try {
+      if ('imprimirQr' in b.dataset) { imprimirCarteles($('[data-qr-url]').value.trim()); return; }
+      if ('descargarQr' in b.dataset) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([svgQr($('[data-qr-url]').value.trim())], { type: 'image/svg+xml' }));
+        a.download = 'qr-juegos.svg'; a.click(); return;
+      }
       if ('generar' in b.dataset) {
         const palabras = ['TACO', 'SALSA', 'LIMA', 'CHILE', 'MOLE', 'AGAVE', 'NOPAL', 'ELOTE', 'SALUD', 'FIESTA'];
         $('[name=codigo]').value = `${CE.azar ? CE.azar(palabras) : palabras[Math.floor(Math.random() * palabras.length)]}${Math.floor(10 + Math.random() * 90)}`;

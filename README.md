@@ -48,8 +48,9 @@ bucket `fotos` de Supabase (se reducen a WebP en el navegador antes de subirlas)
 - **Fotos**: galería de la portada (subir, pies de foto ES/DE, ordenar, foto grande).
 - **Datos y horario**: dirección, teléfono, enlaces, valoración y horario.
 - **Cara del jefe**: la foto que sale en los juegos (se recorta en cuadrado).
-- **Juegos y ranking**: código del día, casilla de premio de la ruleta, premios por periodo y
-  moderación del ranking (ocultar/borrar, copiar los ganadores para Instagram).
+- **Juegos y ranking**: código del día, QR de las mesas (carteles imprimibles 4 por A4), casilla de
+  premio de la ruleta, premios por periodo y moderación del ranking (ocultar/borrar, copiar los
+  ganadores para Instagram).
 
 ## Seguridad
 
@@ -75,6 +76,7 @@ public/js/ranking.js       Rankings y formulario de puntuación
 public/js/admin.js         Panel de administración
 public/js/juegos/*.js      Un archivo por juego
 public/vendor/supabase.js  supabase-js 2.45.4 (alojado aquí, sin CDN)
+public/vendor/qrcode.js    qrcode-generator 1.4.4 (MIT)
 supabase/esquema.sql       Tablas, permisos, funciones y almacenamiento
 supabase/semilla.sql       GENERADO con `node scripts/generar-semilla.mjs`
 ```

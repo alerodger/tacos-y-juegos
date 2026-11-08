@@ -20,16 +20,16 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
       del jefe, código del día, premios, premio de la ruleta y moderación del ranking
 - [x] **5. Rankings** diarios / semanales / mensuales con Instagram opcional, código del día y
       consentimiento explícito
-- [ ] **6. Más juegos**
+- [x] **6. Más juegos** (14 en total)
   - [x] 18+ (con aviso, confirmación de edad y "vale sin alcohol"): *Pirinola toma todo*,
         *Ruleta del jefe*, *Cubilete* (póker de dados), *Yo nunca*, *Verdad o reto*,
         *¿Quién es más probable…?*
   - [x] En grupo: *El dedo del destino* (¿quién paga la ronda?), *Lotería* (cartas propias ES/DE),
         *Adivina la palabra*
-  - [ ] Arcade con la cara del jefe y ranking: *Piñata*, *Lluvia de tacos*
-  - [ ] Aprender con ranking: *Memoria ES↔DE*, *Quiz de México*
+  - [x] Arcade con la cara del jefe y ranking: *Piñata*, *Lluvia de tacos*
+  - [x] Aprender con ranking: *Memoria ES↔DE*, *Quiz de México*
 - [ ] **7. Ventas**: [x] enlaces a la carta de bebidas desde los juegos, [x] casilla de premio en
-      la ruleta, [x] premios por ranking; [ ] "happy hour del juego", [ ] QR imprimible de mesa
+      la ruleta, [x] premios por ranking; [x] QR imprimible de mesa (carteles 4×A4 desde el panel); [ ] "happy hour del juego"
 - [~] **8. Legal (obligatorio en Alemania)**: plantillas de Impressum, Datenschutzerklärung y
       Teilnahmebedingungen hechas; faltan los datos del titular y revisión. Sin cookies ni recursos
       de terceros (tipografías y supabase-js alojados en la web)
@@ -39,9 +39,8 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 ## Pendiente de conseguir del cliente
 
 - Logo en vectorial / alta resolución (ahora solo hay uno de 150 px)
-- Confirmar la carta y las traducciones al español; el "Mole negro" de 40 € en Dips de TheFork
-  parece un error y no se ha incluido
-- Horario real (TheFork no lo indica; ahora pone "desde las 18:00")
+- Confirmar la carta y las traducciones al español; Mole negro (dip) puesto a 4,00 € leyendo una
+  foto borrosa (TheFork decía 40 €)
 - Permiso de uso de las fotos (ahora hay 5 sacadas de internet/Instagram)
 - Foto de la cara del dueño (con su consentimiento por escrito)
 - Datos para el Impressum (titular, contacto, USt-IdNr.)

@@ -299,3 +299,49 @@ a.ficha:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,.25)
 .rk-premios { background: linear-gradient(135deg, #fff1cf, #ffe2ec); border-radius: 14px; padding: 10px 16px; width: 100%; max-width: 560px; }
 .rk-premios p { margin: 4px 0; font-weight: 700; }
 .rk-nota { margin: 0; font-size: .85rem; color: var(--tinta-suave); text-align: center; }
+
+/* ---------- Juegos de lienzo ---------- */
+.arcade { position: relative; display: grid; gap: 10px; justify-items: center; }
+.lienzo { display: block; border-radius: 18px; touch-action: none; user-select: none; -webkit-user-select: none; }
+.marcador-arcade { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; font-weight: 700; }
+.marcador-arcade b { color: var(--rojo); font: 400 1.6rem var(--fuente-titulo); vertical-align: middle; }
+.inicio-juego { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(248, 239, 228, .92); border-radius: 18px; z-index: 4; padding: 16px; }
+.inicio-caja { display: grid; gap: 8px; justify-items: center; text-align: center; max-width: 360px; }
+.inicio-caja .cara-jefe { width: 100px; height: 100px; animation: saludar 1.6s ease-in-out infinite; }
+.inicio-icono { font-size: 2.4rem; margin: 0; }
+.inicio-caja p { margin: 0; }
+
+/* Memoria */
+.memoria, .quiz { display: grid; gap: 12px; justify-items: center; text-align: center; }
+.mem-rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 480px; }
+.mem-carta {
+  aspect-ratio: 3 / 4; border: 0; border-radius: 12px; padding: 4px; position: relative; perspective: 600px;
+  background: transparent; color: var(--tinta);
+}
+.mem-dorso, .mem-cara {
+  position: absolute; inset: 0; border-radius: 12px; display: grid; place-items: center; align-content: center; gap: 6px;
+  backface-visibility: hidden; transition: transform .35s;
+}
+.mem-dorso { background: var(--talavera); background-size: 46px; font-size: 1.8rem; box-shadow: 0 4px 0 #b9a68c; }
+.mem-cara { background: #fff; transform: rotateY(180deg); box-shadow: 0 4px 0 #d8c9b4; padding: 4px; }
+.mem-cara svg { width: 26px; height: 17px; border-radius: 2px; }
+.mem-cara b { font-size: clamp(.72rem, 3.2vw, 1rem); line-height: 1.15; word-break: break-word; }
+.mem-carta.vista .mem-dorso { transform: rotateY(180deg); }
+.mem-carta.vista .mem-cara { transform: rotateY(0); }
+.mem-carta.hecha .mem-cara { background: #dff5e7; box-shadow: 0 4px 0 #9ed3b2; }
+.mem-carta:disabled { cursor: default; }
+
+/* Quiz */
+.quiz-tiempo { width: 100%; max-width: 480px; height: 26px; border-radius: 999px; background: #e7dccd; position: relative; overflow: hidden; }
+.quiz-tiempo::before { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--resto); background: linear-gradient(90deg, var(--rojo), var(--vela)); transition: width .2s linear; }
+.quiz-tiempo span { position: relative; font-weight: 800; line-height: 26px; }
+.quiz-pregunta { font-family: var(--fuente); font-weight: 800; font-size: clamp(1.2rem, 4.6vw, 1.6rem); color: var(--tinta); margin: 4px 0; max-width: 520px; line-height: 1.25; }
+.quiz-opciones { display: grid; gap: 8px; width: 100%; max-width: 480px; }
+.quiz-opciones button { border: 0; border-radius: 14px; padding: 14px 16px; background: #fff; color: var(--tinta); font-weight: 700; font-size: 1.02rem; box-shadow: 0 4px 0 #d8c9b4; text-align: left; }
+.quiz-opciones button:not(:disabled):hover { background: #fff3d6; }
+.quiz-opciones button.bien { background: var(--verde); color: #fff; box-shadow: 0 4px 0 #1d6b3d; }
+.quiz-opciones button.mal { background: var(--rojo); color: #fff; box-shadow: 0 4px 0 var(--rojo-oscuro); }
+.quiz-opciones button.apagada { opacity: .5; }
+.quiz-resultado { margin: 0; font-weight: 800; font-size: 1.2rem; }
+.quiz-resultado.bien { color: var(--verde); }
+.quiz-resultado.mal { color: var(--rojo); }

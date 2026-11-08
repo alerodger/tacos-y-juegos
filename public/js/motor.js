@@ -70,3 +70,55 @@ CE.finPartida = (escenario, { juego, puntos, alOtra }) => {
   if (conRanking && CE.ranking) CE.ranking.formulario(capa.querySelector('.fin-rk'), { juego, puntos });
   capa.querySelector('[data-otra]').focus();
 };
+
+// Imagen de la cara del jefe para dibujar en <canvas> (foto subida o jefe dibujado)
+CE.imagenJefe = () => new Promise((ok) => {
+  const img = new Image();
+  const url = CE.ajustes?.cara_jefe;
+  img.onload = () => ok({ img, foto: Boolean(url) });
+  img.onerror = () => { if (url) { CE.ajustes.cara_jefe = null; CE.imagenJefe().then(ok); } else ok({ img: null }); };
+  img.src = url || `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${CE.JEFE_SVG_INTERIOR}</svg>`)}`;
+});
+
+// Dibuja la cara del jefe centrada en (x, y) con diámetro d (en círculo si es una foto)
+CE.dibujarJefe = (ctx, jefe, x, y, d) => {
+  if (!jefe?.img) return;
+  if (jefe.foto) {
+    ctx.save(); ctx.beginPath(); ctx.arc(x, y, d / 2, 0, Math.PI * 2); ctx.clip();
+    ctx.drawImage(jefe.img, x - d / 2, y - d / 2, d, d); ctx.restore();
+    ctx.beginPath(); ctx.arc(x, y, d / 2, 0, Math.PI * 2); ctx.lineWidth = Math.max(2, d / 30); ctx.strokeStyle = '#22180f'; ctx.stroke();
+  } else {
+    const s = d * 1.25; ctx.drawImage(jefe.img, x - s / 2, y - s * 0.6, s, s);
+  }
+};
+
+// Lienzo que se adapta al ancho del escenario (con nitidez en pantallas retina)
+CE.lienzo = (escenario, proporcion = 4 / 3) => {
+  const c = document.createElement('canvas');
+  c.className = 'lienzo';
+  const ctx = c.getContext('2d');
+  const medida = { w: 0, h: 0 };
+  const ajustar = () => {
+    const cs = getComputedStyle(escenario);
+    const w = Math.min(escenario.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), 560);
+    const h = Math.min(w * proporcion, window.innerHeight * 0.68);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+    c.style.width = `${w}px`; c.style.height = `${h}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    medida.w = w; medida.h = h;
+  };
+  ajustar();
+  window.addEventListener('resize', ajustar);
+  return { c, ctx, medida, quitar: () => window.removeEventListener('resize', ajustar) };
+};
+
+// Capa de "Toca para empezar" con instrucciones
+CE.pantallaInicio = (cont, { icono, texto, alEmpezar }) => {
+  const capa = document.createElement('div');
+  capa.className = 'inicio-juego';
+  capa.innerHTML = `<div class="inicio-caja">${CE.jefeHtml('grande')}<p class="inicio-icono">${icono}</p><p>${texto}</p>
+    <button class="boton amarillo grande" type="button">▶ ${CE.L({ es: '¡Empezar!', de: 'Los geht’s!' })}</button></div>`;
+  capa.querySelector('button').addEventListener('click', () => { capa.remove(); alEmpezar(); });
+  cont.appendChild(capa);
+};
