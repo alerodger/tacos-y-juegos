@@ -54,3 +54,59 @@ CE.papelPicado = () => {
       `<svg viewBox="0 0 60 62" style="--i:${i}"><path fill-rule="evenodd" fill="${colores[i % colores.length]}" d="${forma}"/></svg>`).join('');
   });
 };
+
+// ---------- Horario semanal ----------
+// horario: array de 7 (0 = domingo) con [abre, cierra] o null. Acepta "24:00" y cierres después de medianoche.
+CE.horario = {
+  min: (h) => { const [a, b] = String(h).split(':').map(Number); return a * 60 + (b || 0); },
+  nombreDia(i, largo = true) {
+    const ref = new Date(Date.UTC(2024, 0, 7 + i, 12)); // 7/1/2024 fue domingo
+    const t = new Intl.DateTimeFormat(CE.idioma === 'es' ? 'es-ES' : 'de-DE', { weekday: largo ? 'long' : 'short', timeZone: 'UTC' }).format(ref);
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  },
+  valido: (h) => Array.isArray(h) && h.length === 7,
+  // Filas agrupando días seguidos (lunes primero) con el mismo horario
+  filas(h) {
+    if (!CE.horario.valido(h)) return [];
+    const orden = [1, 2, 3, 4, 5, 6, 0];
+    const clave = (d) => (h[d] ? `${h[d][0]}-${h[d][1]}` : 'x');
+    const grupos = [];
+    orden.forEach((d) => {
+      const g = grupos[grupos.length - 1];
+      if (g && clave(g.dias[g.dias.length - 1]) === clave(d)) g.dias.push(d); else grupos.push({ dias: [d] });
+    });
+    return grupos.map((g) => ({
+      dias: g.dias.length === 1 ? CE.horario.nombreDia(g.dias[0]) : `${CE.horario.nombreDia(g.dias[0])} – ${CE.horario.nombreDia(g.dias[g.dias.length - 1])}`,
+      horas: h[g.dias[0]] ? `${h[g.dias[0]][0]} – ${h[g.dias[0]][1]}` : CE.t('horario.cerrado'),
+      cerrado: !h[g.dias[0]],
+    }));
+  },
+  // Estado ahora mismo en hora de Alemania
+  estado(h, ahora = new Date()) {
+    if (!CE.horario.valido(h)) return null;
+    const partes = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+      .formatToParts(ahora).map((p) => [p.type, p.value]));
+    const dia = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(partes.weekday);
+    const m = Number(partes.hour) * 60 + Number(partes.minute);
+    const tramo = (d) => { const t = h[(d + 7) % 7]; if (!t) return null; const a = CE.horario.min(t[0]); let c = CE.horario.min(t[1]); if (c <= a) c += 1440; return [a, c, t]; };
+    const ayer = tramo(dia - 1);
+    if (ayer && ayer[1] > 1440 && m < ayer[1] - 1440) return { abierto: true, hasta: ayer[2][1] };
+    const hoy = tramo(dia);
+    if (hoy && m >= hoy[0] && m < hoy[1]) return { abierto: true, hasta: hoy[2][1] };
+    for (let k = 0; k < 8; k++) {
+      const t = tramo(dia + k);
+      if (t && (k > 0 || t[0] > m)) return { abierto: false, dias: k, dia: (dia + k) % 7, hora: t[2][0] };
+    }
+    return { abierto: false };
+  },
+  texto(h) {
+    const e = CE.horario.estado(h);
+    if (!e) return '';
+    if (e.abierto) return `🟢 ${CE.t('horario.abierto')} · ${CE.t('horario.hasta')} ${e.hasta}`;
+    if (e.hora === undefined) return `🔴 ${CE.t('horario.cerradoAhora')}`;
+    const dia = CE.horario.nombreDia(e.dia);
+    const cuando = e.dias === 0 ? CE.t('horario.hoy') : e.dias === 1 ? CE.t('horario.manana')
+      : `${CE.t('horario.el')} ${CE.idioma === 'es' ? dia.toLowerCase() : dia}`;
+    return `🔴 ${CE.t('horario.cerradoAhora')} · ${CE.t('horario.abre')} ${cuando} ${CE.t('horario.a')} ${e.hora}`;
+  },
+};

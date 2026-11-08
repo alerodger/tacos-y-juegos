@@ -409,30 +409,34 @@
       <div class="dos">${campo('reserva_url', 'Enlace de reservas (TheFork…)', 'Reservierungslink (TheFork…)', 'url')}${campo('maps_url', 'Enlace de Google Maps', 'Google-Maps-Link', 'url')}</div>
       <div class="tres">${campo('valoracion', 'Nota (p. ej. 9,0)', 'Bewertung (z. B. 9,0)')}${campo('valoracion_opiniones', 'Nº de opiniones', 'Anzahl Bewertungen', 'number')}${campo('valoracion_fuente', 'Fuente (TheFork, Google…)', 'Quelle (TheFork, Google…)')}</div>
       <fieldset><legend>🕒 ${L('Horario', 'Öffnungszeiten')}</legend>
-        <div data-horario>${(a.horario || []).map(filaHorario).join('')}</div>
-        <button class="enlace" type="button" data-nueva-hora>＋ ${L('Añadir fila', 'Zeile hinzufügen')}</button>
+        <p class="ayuda">${L('Formato 17:00. Para medianoche escribe 24:00; si cierras más tarde, p. ej. 01:00.', 'Format 17:00. Für Mitternacht 24:00 eintragen; bei späterem Schluss z. B. 01:00.')}</p>
+        <div class="semana">${[1, 2, 3, 4, 5, 6, 0].map((d) => filaDia(d, CE.horario.valido(a.horario) ? a.horario[d] : null)).join('')}</div>
       </fieldset>
       <button class="boton" type="submit">💾 ${L('Guardar', 'Speichern')}</button>
     </form>`;
   }
-  function filaHorario(h) {
-    return `<div class="hora"><input data-h="dias_es" value="${esc(h.dias_es || '')}" placeholder="🇲🇽 ${L('Lunes a jueves', 'Lunes a jueves')}">
-      <input data-h="dias_de" value="${esc(h.dias_de || '')}" placeholder="🇩🇪 Montag bis Donnerstag">
-      <input data-h="horas_es" value="${esc(h.horas_es || h.horas || '')}" placeholder="🇲🇽 18:00 – 00:00">
-      <input data-h="horas_de" value="${esc(h.horas_de || h.horas || '')}" placeholder="🇩🇪 18:00 – 24:00 Uhr">
-      <button type="button" data-quitar-hora aria-label="✕">✕</button></div>`;
+  function filaDia(d, t) {
+    return `<div class="dia" data-dia="${d}">
+      <label class="check"><input type="checkbox" data-abierto ${t ? 'checked' : ''}> ${CE.horario.nombreDia(d)}</label>
+      <input data-abre value="${esc(t?.[0] || '17:00')}" aria-label="${L('Abre', 'Öffnet')}">
+      <span>–</span>
+      <input data-cierra value="${esc(t?.[1] || '24:00')}" aria-label="${L('Cierra', 'Schließt')}">
+    </div>`;
   }
-  raiz.addEventListener('click', (e) => {
-    if (pestana !== 'datos') return;
-    if (e.target.closest('[data-nueva-hora]')) $('[data-horario]').insertAdjacentHTML('beforeend', filaHorario({}));
-    if (e.target.closest('[data-quitar-hora]')) e.target.closest('.hora').remove();
-  });
   raiz.addEventListener('submit', async (e) => {
     if (!e.target.matches('[data-form-datos]')) return;
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
-    const horario = [...e.target.querySelectorAll('.hora')].map((r) => Object.fromEntries([...r.querySelectorAll('[data-h]')].map((i) => [i.dataset.h, i.value.trim()])))
-      .filter((h) => h.dias_es || h.dias_de);
+    const horario = Array(7).fill(null);
+    const formato = /^([01]?\d|2[0-4]):[0-5]\d$/;
+    let malo = false;
+    e.target.querySelectorAll('.dia').forEach((r) => {
+      if (!$('[data-abierto]', r).checked) return;
+      const t = [$('[data-abre]', r).value.trim(), $('[data-cierra]', r).value.trim()];
+      if (!formato.test(t[0]) || !formato.test(t[1])) malo = true;
+      horario[Number(r.dataset.dia)] = t;
+    });
+    if (malo) { aviso(L('Revisa el horario: formato 17:00.', 'Öffnungszeiten prüfen: Format 17:00.'), true); return; }
     const cambios = { ...d, valoracion_opiniones: d.valoracion_opiniones ? Number(d.valoracion_opiniones) : null, horario, actualizado: new Date().toISOString() };
     Object.keys(cambios).forEach((k) => { if (cambios[k] === '') cambios[k] = null; });
     cambios.instagram = (cambios.instagram || '').replace(/^@/, '') || null;

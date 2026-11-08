@@ -152,3 +152,8 @@
 .horario td:last-child { text-align: right; font-weight: 700; }
 .tarjeta small { color: var(--texto-suave); }
 .tarjeta .boton { margin-top: 6px; }
+.hero-datos { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 760px) { .hero-datos { justify-content: center; } }
+.apertura { display: inline-flex; align-items: center; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: 7px 14px; font-size: .9rem; text-decoration: none; }
+.apertura-tarjeta { font-weight: 700; }
+.horario tr.cerrado td { color: var(--texto-suave); }

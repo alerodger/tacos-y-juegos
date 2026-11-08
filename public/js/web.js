@@ -123,9 +123,12 @@
   }
 
   function pintarHorario() {
-    $('[data-horario]').innerHTML = (a.horario || []).map((h) =>
-      `<tr><td>${esc(CE.tx(h, 'dias'))}</td><td>${esc(CE.tx(h, 'horas') || h.horas || '')}</td></tr>`).join('');
+    $('[data-horario]').innerHTML = CE.horario.filas(a.horario).map((f) =>
+      `<tr class="${f.cerrado ? 'cerrado' : ''}"><td>${esc(f.dias)}</td><td>${esc(f.horas)}</td></tr>`).join('');
+    const estado = CE.horario.texto(a.horario);
+    $$('[data-apertura]').forEach((el) => { el.hidden = !estado; el.textContent = estado; });
   }
+  setInterval(pintarHorario, 60000);
 
   $('[data-pestanas]').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-cat]');

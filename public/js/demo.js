@@ -106,6 +106,7 @@ window.CE = window.CE || {};
   I(['Alioli de chipotle', 'Chipotle-Aioli'], 2.5, null);
   I('Salsa roja', 2.5, ['Salsa de tomate ahumada con chiles', 'Rauchige Tomatensalsa mit Chilis'], { picante: 1, vegano: true });
   I('Salsa verde', 2.5, ['Salsa de tomatillo con chile serrano', 'Würzige Tomatillo-Salsa mit Serrano'], { picante: 1, vegano: true });
+  I('Mole negro', 4, ['Salsa con chocolate y chiles', 'Reichhaltige Sauce mit Schokolade und Chilis']); // precio leído de una foto borrosa: confirmar
   I('X-ni-pek', 2.2, ['Cebolla morada, vinagre, orégano y habanero', 'Rote Zwiebeln, Essig, Oregano, Habanero'], { picante: 3, vegano: true });
   I(['Tortillas (2 uds.)', 'Tortillas (2 Stk.)'], 2.9, ['De maíz o trigo, recién hechas', 'Frisch zubereitete Mais- oder Weizentortillas'], { vegano: true });
   I(['Tostadas (2 uds.)', 'Tostadas (2 Stk.)'], 2.9, null, { vegano: true });
@@ -263,15 +264,15 @@ window.CE = window.CE || {};
       eslogan_de: 'Cocina Mexicana & Tequila Bar',
       direccion: 'Löwengrube 4',
       cp_ciudad: '94032 Passau',
-      telefono: '+49 851 931146',
+      telefono: '+49 176 62011209',
       email: '',
       instagram: 'cantinaensenada_passau',
       reserva_url: 'https://www.thefork.de/restaurant/cantina-ensenada-r850664',
       maps_url: 'https://www.google.com/maps/search/?api=1&query=Cantina+Ensenada+L%C3%B6wengrube+4+94032+Passau',
       valoracion: '9,0', valoracion_opiniones: 197, valoracion_fuente: 'TheFork',
-      horario: [
-        { dias_es: 'Todos los días', dias_de: 'Täglich', horas_es: 'desde las 18:00', horas_de: 'ab 18:00 Uhr' },
-      ],
+      // Horario por día de la semana (0 = domingo … 6 = sábado): [abre, cierra] o null si cierra.
+      // "24:00" = medianoche; si cierra después de medianoche, p. ej. "01:00", también vale.
+      horario: [['17:00', '23:00'], null, ['17:00', '24:00'], ['17:00', '24:00'], ['17:00', '24:00'], ['17:00', '24:00'], ['17:00', '24:00']],
       cara_jefe: null, // URL de la foto del dueño. null = jefe dibujado
       promo_ruleta_es: null, promo_ruleta_de: null,
     },

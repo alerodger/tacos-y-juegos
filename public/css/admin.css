@@ -106,3 +106,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--rojo); }
 .aviso-flotante.error { background: var(--rojo); }
 .form-admin > .boton, .caja-admin > .boton { justify-self: start; }
 .fila-herramientas select { width: auto; min-width: 200px; }
+.semana { display: grid; gap: 6px; }
+.dia { display: grid; grid-template-columns: 160px 90px auto 90px; gap: 8px; align-items: center; }
+.dia input:not([type="checkbox"]) { font: inherit; padding: .4em .6em; border: 1.5px solid #ddd0bf; border-radius: 8px; width: 100%; }
+.dia:has([data-abierto]:not(:checked)) input:not([type="checkbox"]) { opacity: .35; }

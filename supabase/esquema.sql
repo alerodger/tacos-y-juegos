@@ -26,7 +26,7 @@ create table if not exists ajustes (
   direccion text, cp_ciudad text, telefono text, email text, instagram text,
   reserva_url text, maps_url text,
   valoracion text, valoracion_opiniones int, valoracion_fuente text,
-  horario jsonb not null default '[]',          -- [{dias_es, dias_de, horas_es, horas_de}]
+  horario jsonb not null default '[]',          -- 7 elementos (0 = domingo): ["17:00", "24:00"] o null si cierra
   cara_jefe text,                               -- URL pública de la foto del dueño
   promo_ruleta_es text, promo_ruleta_de text,   -- casilla de premio opcional en la ruleta
   ranking_con_codigo boolean not null default false, -- ¿hace falta el código del día para puntuar?
