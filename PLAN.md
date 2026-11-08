@@ -10,7 +10,7 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 ## Fases
 
 - [x] **0. Repositorio** y despliegue automático a GitHub Pages
-- [ ] **1. Base de la web**: diseño con motivos mexicanos, idiomas ES/DE, portada, carta, galería,
+- [x] **1. Base de la web**: diseño con motivos mexicanos, idiomas ES/DE, portada, carta, galería,
       dónde estamos (con datos de ejemplo mientras no hay Supabase)
 - [ ] **2. Juegos (1ª tanda)**: sala de juegos + Ahorcado ES↔DE con la cara del jefe
 - [ ] **3. Supabase**: esquema (ajustes, carta, fotos, puntuaciones, premios), permisos RLS,
