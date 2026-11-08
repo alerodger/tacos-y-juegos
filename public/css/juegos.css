@@ -1,0 +1,119 @@
+/* ---------- Sala de juegos ---------- */
+body.sala {
+  background:
+    repeating-conic-gradient(from 0deg at 50% -10%, rgba(255, 210, 63, .05) 0 5deg, transparent 5deg 10deg),
+    linear-gradient(180deg, var(--noche), #0f3b47 60%, var(--noche));
+  color: #fff; min-height: 100vh;
+}
+body.sala .papel-picado { position: relative; z-index: 1; }
+#sala { padding: 12px 0 60px; }
+
+.sala-cabeza { display: flex; align-items: center; gap: 20px; margin: 10px 0 30px; }
+.sala-cabeza h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); color: var(--cempasuchil); margin: 0; text-shadow: 0 4px 0 var(--chile); }
+.sala-cabeza p { margin: 6px 0 0; opacity: .85; font-size: 1.05rem; }
+.cara-jefe { width: 96px; height: 96px; flex: 0 0 auto; object-fit: cover; border-radius: 50%; }
+.cara-jefe.saluda { animation: saludar 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes saludar { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+.sala-grupo { margin-bottom: 34px; }
+.sala-grupo h2 { font-family: var(--fuente); font-weight: 800; font-size: 1.3rem; margin-bottom: 14px; }
+.aviso-18 { background: rgba(215, 38, 61, .18); border-left: 4px solid var(--chile); padding: 8px 14px; border-radius: 8px; font-size: .92rem; margin: -4px 0 14px; }
+.sala-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.ficha {
+  display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--radio);
+  background: #fff; color: var(--tinta); text-decoration: none; position: relative;
+  box-shadow: 0 6px 0 rgba(0,0,0,.25); transition: transform .15s, box-shadow .15s;
+}
+a.ficha:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,.25); }
+.ficha-icono {
+  font-size: 2.2rem; width: 62px; height: 62px; flex: 0 0 auto; display: grid; place-items: center;
+  border-radius: 16px; background: var(--talavera); background-size: 40px;
+}
+.ficha-texto { flex: 1; min-width: 0; }
+.ficha-texto b { display: block; font-size: 1.08rem; line-height: 1.25; }
+.ficha-texto small { display: block; color: var(--tinta-suave); font-size: .88rem; line-height: 1.35; margin-top: 3px; }
+.ficha-flecha { color: var(--rosa); font-size: 1.2rem; }
+.ficha.bloqueada { opacity: .6; background: #e9e1d4; }
+.ficha-pronto {
+  position: absolute; top: -9px; right: 12px; background: var(--cempasuchil); color: var(--tinta);
+  font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: .2em .7em; border-radius: 999px;
+}
+.sala-volver { text-align: center; margin-top: 40px; }
+
+/* Barra superior dentro de un juego */
+.juego-barra { display: flex; align-items: center; gap: 14px; margin: 6px 0 16px; flex-wrap: wrap; }
+.juego-barra h1 { font-size: clamp(1.5rem, 5vw, 2.2rem); margin: 0; color: var(--cempasuchil); }
+.juego-barra .boton { padding: .55em 1em; font-size: .9rem; }
+.escenario {
+  position: relative; background: var(--crema); color: var(--tinta); border-radius: 24px;
+  padding: clamp(14px, 3vw, 28px); box-shadow: 0 20px 50px rgba(0,0,0,.35); overflow: hidden;
+}
+
+/* Fin de partida */
+.fin-partida {
+  position: absolute; inset: 0; background: rgba(11, 42, 51, .88); display: grid; place-items: center;
+  padding: 20px; animation: aparecer .3s ease-out; z-index: 5;
+}
+.fin-caja { background: #fff; border-radius: 24px; padding: 28px; text-align: center; max-width: 380px; width: 100%; }
+.fin-caja .cara-jefe { margin: -10px auto 8px; width: 110px; height: 110px; animation: saludar 1.6s ease-in-out infinite; }
+.fin-caja h2 { color: var(--rosa); font-size: 2rem; }
+.fin-puntos b { font-size: 3rem; font-family: var(--fuente-titulo); color: var(--mar); font-weight: 400; }
+.fin-puntos { margin: 0; }
+.fin-ranking { font-size: .9rem; background: var(--arena); border-radius: 12px; padding: 8px 12px; }
+@keyframes aparecer { from { opacity: 0; transform: scale(.96); } }
+
+/* ---------- Ahorcado ---------- */
+.ahorcado { display: grid; gap: 12px; justify-items: center; text-align: center; }
+.ah-modos { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ah-modos button {
+  display: flex; align-items: center; gap: 6px; border: 2px solid var(--tinta); background: #fff;
+  border-radius: 999px; padding: .35em .9em; font-weight: 700; font-size: .88rem; color: var(--tinta);
+}
+.ah-modos button svg { width: 22px; height: 15px; border-radius: 2px; }
+.ah-modos button[aria-pressed="true"] { background: var(--tinta); color: #fff; }
+.ah-marcador { display: flex; gap: 8px 18px; flex-wrap: wrap; justify-content: center; font-size: .95rem; }
+.ah-marcador b { color: var(--rosa); }
+.ah-dibujo { width: min(240px, 60vw); height: auto; }
+.ah-dibujo line { stroke: var(--tinta); stroke-width: 5; stroke-linecap: round; }
+.ah-horca line { stroke: #8a5a2b; stroke-width: 7; }
+.ah-horca .cuerda { stroke: #c9a46a; stroke-width: 3; }
+.ah-cuerpo > * { animation: aparecer .25s ease-out; transform-box: fill-box; transform-origin: center; }
+.ah-dibujo.ganada .ah-cuerpo, .ah-dibujo.ganada .cuerda { display: none; }
+.ah-dibujo.perdida .ah-cuerpo { animation: balanceo 1.6s ease-in-out infinite; transform-origin: 140px 20px; }
+@keyframes balanceo { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+.ah-salvado { animation: saltar .6s ease-in-out infinite alternate; }
+.ah-salvado text { font: 400 26px var(--fuente-titulo); fill: var(--rosa); }
+@keyframes saltar { to { transform: translateY(-10px); } }
+.ah-pista { margin: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.ah-pista svg { width: 24px; height: 16px; border-radius: 2px; }
+.ah-pista b { font-size: 1.15rem; }
+.ah-cat { background: var(--mar); color: #fff; border-radius: 999px; padding: .15em .75em; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.ah-palabra { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 100%; }
+.ah-letra {
+  width: clamp(26px, 8vw, 40px); height: clamp(36px, 10vw, 50px); border-bottom: 4px solid var(--tinta);
+  display: grid; place-items: center; font-weight: 800; font-size: clamp(1.2rem, 5vw, 1.8rem);
+}
+.ah-letra.visible { animation: pop .25s ease-out; }
+.ah-letra.faltaba { color: var(--chile); }
+.ah-hueco { width: 18px; }
+.ah-palabra.tiembla { animation: temblar .35s; }
+@keyframes pop { 50% { transform: scale(1.3); } }
+@keyframes temblar { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.ah-acciones { min-height: 0; display: grid; gap: 10px; justify-items: center; }
+.ah-acciones:empty { display: none; }
+.ah-msg { margin: 0; font-weight: 700; font-size: 1.1rem; }
+.ah-msg span { display: block; font-weight: 500; font-size: .95rem; color: var(--tinta-suave); }
+.ah-msg.bien { color: var(--verde); }
+.ah-msg.mal { color: var(--chile); }
+.ah-teclado { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; width: 100%; max-width: 560px; }
+.ah-teclado.de { grid-template-columns: repeat(10, 1fr); }
+.ah-teclado button {
+  aspect-ratio: 1 / 1.1; border: 0; border-radius: 10px; background: #fff; color: var(--tinta);
+  font-weight: 800; font-size: clamp(.95rem, 4vw, 1.2rem); box-shadow: 0 3px 0 #cdbfa8; padding: 0;
+  touch-action: manipulation;
+}
+.ah-teclado button:not(:disabled):hover { background: var(--sol); }
+.ah-teclado button:not(:disabled):active { transform: translateY(2px); box-shadow: 0 1px 0 #cdbfa8; }
+.ah-teclado button.bien { background: var(--verde); color: #fff; box-shadow: none; }
+.ah-teclado button.mal { background: #e7ddcf; color: #b3a28c; box-shadow: none; text-decoration: line-through; }
+.ah-teclado button:disabled { cursor: default; }
