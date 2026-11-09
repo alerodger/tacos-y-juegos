@@ -21,8 +21,26 @@ CE.api = {
   },
 };
 
+// Datos del panel en modo demostración (guardados en este navegador por admin-demo.js)
+CE.demoLocal = () => {
+  try {
+    const db = JSON.parse(localStorage.getItem('ce-demo-db'));
+    if (!db) return null;
+    const orden = (l) => [...(l || [])].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+    return {
+      ajustes: { ...CE.demo.ajustes, ...(db.ajustes?.[0] || {}) },
+      categorias: orden(db.categorias),
+      platos: orden(db.platos).filter((p) => p.visible !== false),
+      fotos: orden(db.fotos),
+      premios: orden(db.premios).filter((p) => p.activo !== false),
+      opiniones: orden(db.opiniones).filter((o) => o.visible !== false),
+      demo: true,
+    };
+  } catch (e) { return null; }
+};
+
 CE.cargarDatos = async () => {
-  if (!CE.api.activo) return { ...CE.demo, premios: [], demo: true };
+  if (!CE.api.activo) return CE.demoLocal() || { ...CE.demo, premios: [], demo: true };
   try {
     const [ajustes, categorias, platos, fotos, premios, opiniones] = await Promise.all([
       CE.api.get('ajustes?select=*&id=eq.1'),

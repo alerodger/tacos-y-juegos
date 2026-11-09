@@ -113,3 +113,10 @@ label.check input { width: 18px; height: 18px; accent-color: var(--rojo); }
 .qr-vista { width: 180px; background: #fff; border: 1px solid #eee3d5; border-radius: 12px; padding: 8px; }
 .qr-vista svg { display: block; width: 100%; height: auto; }
 .acciones .camara { display: inline-grid; place-items: center; min-width: 32px; height: 30px; border-radius: 8px; background: var(--vela); cursor: pointer; font-size: .95rem; }
+.banda-demo { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: center; padding: 10px 16px; background: #fff3c4; border-bottom: 2px dashed #d6a400; font-size: .9rem; text-align: center; }
+.banda-demo a { color: var(--rojo); font-weight: 700; }
+.banda-demo button { border: 0; background: var(--tinta); color: #fff; border-radius: 999px; padding: .35em .9em; font-weight: 700; font-size: .85rem; }
+.valoracion-fila { display: grid; grid-template-columns: 130px 90px 60px 140px 1fr auto; gap: 6px; margin-bottom: 6px; }
+.valoracion-fila input, .valoracion-fila select { font: inherit; padding: .45em .6em; border: 1.5px solid #ddd0bf; border-radius: 8px; min-width: 0; background: #fff; }
+.valoracion-fila button { border: 0; background: #f1e8dc; border-radius: 8px; min-width: 32px; }
+@media (max-width: 720px) { .valoracion-fila { grid-template-columns: 1fr 1fr 1fr; } }

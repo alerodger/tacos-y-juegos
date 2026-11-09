@@ -46,11 +46,20 @@ bucket `fotos` de Supabase (se reducen a WebP en el navegador antes de subirlas)
 - **Carta**: platos por categoría (añadir, editar, ocultar, ordenar, borrar), variantes con precio
   propio, foto, etiquetas (picante, vegetariano, vegano, favorito) y gestión de categorías.
 - **Fotos**: galería de la portada (subir, pies de foto ES/DE, ordenar, foto grande).
-- **Datos y horario**: dirección, teléfono, enlaces, valoración y horario.
+- **Reseñas**: el Hall of Fame de la portada (solo reseñas reales, nombre de pila + inicial).
+- **Datos y horario**: dirección, teléfono, enlaces, notas en Google / TheFork / Tripadvisor /
+  Lieferando y horario por días.
 - **Cara del jefe**: la foto que sale en los juegos (se recorta en cuadrado).
 - **Juegos y ranking**: código del día, QR de las mesas (carteles imprimibles 4 por A4), casilla de
   premio de la ruleta, premios por periodo y moderación del ranking (ocultar/borrar, copiar los
   ganadores para Instagram).
+
+### Modo demostración
+
+Mientras `config.js` no tenga las claves de Supabase (o con `/admin/?demo`), el panel funciona en
+**modo demostración**: entra sin contraseña, guarda los cambios en el navegador (localStorage) y la
+web pública de ese mismo navegador los muestra al momento. Sirve para enseñar el panel al cliente.
+El botón "Restablecer demo" vuelve a los datos de ejemplo.
 
 ## Seguridad
 

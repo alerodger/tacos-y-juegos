@@ -15,14 +15,25 @@
   const fallo = (e) => { console.error(e); aviso(`⚠️ ${e.message || e}`, true); };
   const comprobar = ({ data, error }) => { if (error) throw error; return data; };
 
-  if (!CE.api.activo) {
-    raiz.innerHTML = `<div class="caja-admin"><h1>⚙️ ${L('Falta conectar Supabase', 'Supabase ist noch nicht verbunden')}</h1>
-      <p>${L('Rellena supabaseUrl y supabaseKey en public/js/config.js (ver README).', 'Trage supabaseUrl und supabaseKey in public/js/config.js ein (siehe README).')}</p></div>`;
-    CE.aplicarIdioma();
-    return;
+  // Sin Supabase (o con ?demo) el panel funciona en modo demostración, guardando en este navegador
+  const modoDemo = !CE.api.activo || new URLSearchParams(location.search).has('demo');
+  const sb = modoDemo ? CE.adminDemo.crear() : supabase.createClient(CE.config.supabaseUrl, CE.config.supabaseKey);
+  if (modoDemo) {
+    const banda = document.createElement('div');
+    banda.className = 'banda-demo';
+    const pintarBanda = () => {
+      banda.innerHTML = `<span>🧪 <b>${L('Modo demostración', 'Demo-Modus')}</b> · ${L('Los cambios se guardan solo en este navegador y se ven al momento en la web.', 'Änderungen werden nur in diesem Browser gespeichert und sind sofort auf der Website sichtbar.')}</span>
+        <a href="../" target="_blank">↗ ${L('Abrir la web', 'Website öffnen')}</a>
+        <button type="button" data-restablecer>↺ ${L('Restablecer demo', 'Demo zurücksetzen')}</button>`;
+    };
+    pintarBanda();
+    document.addEventListener('idioma', pintarBanda);
+    banda.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-restablecer]')) return;
+      if (confirm(L('¿Volver a los datos de ejemplo? Se pierden los cambios de la demo.', 'Zu den Beispieldaten zurück? Die Demo-Änderungen gehen verloren.'))) { CE.adminDemo.restablecer(); location.reload(); }
+    });
+    document.querySelector('.cabecera').after(banda);
   }
-
-  const sb = supabase.createClient(CE.config.supabaseUrl, CE.config.supabaseKey);
   let pestana = 'carta';
   let estado = { ajustes: null, categorias: [], platos: [], fotos: [], premios: [], catActiva: null };
 
@@ -43,6 +54,8 @@
     comprobar(await sb.storage.from('fotos').upload(ruta, blob, { contentType: 'image/webp', cacheControl: '31536000' }));
     return { ruta, url: sb.storage.from('fotos').getPublicUrl(ruta).data.publicUrl };
   }
+  // Ruta de una imagen vista desde /admin/ (las de assets/ son relativas a la web)
+  const urlImg = (u) => (/^(https?:|data:|blob:)/.test(u || '') ? u : `../${u}`);
   const rutaDeUrl = (url) => (url && url.includes('/storage/v1/object/public/fotos/') ? url.split('/storage/v1/object/public/fotos/')[1] : null);
   const borrarArchivo = async (url) => { const r = rutaDeUrl(url); if (r) await sb.storage.from('fotos').remove([r]); };
 
@@ -102,18 +115,20 @@
 
   async function recargar() {
     try {
-      const [aj, cats, platos, fotos, premios] = await Promise.all([
+      const [aj, cats, platos, fotos, premios, opiniones] = await Promise.all([
         sb.from('ajustes').select('*').eq('id', 1).maybeSingle(),
         sb.from('categorias').select('*').order('orden'),
         sb.from('platos').select('*').order('orden'),
         sb.from('fotos').select('*').order('orden'),
         sb.from('premios').select('*').order('orden'),
+        sb.from('opiniones').select('*').order('orden'),
       ]);
       estado.ajustes = comprobar(aj) || { id: 1, nombre: 'Restaurante', horario: [] };
       estado.categorias = comprobar(cats);
       estado.platos = comprobar(platos);
       estado.fotos = comprobar(fotos);
       estado.premios = comprobar(premios);
+      estado.opiniones = comprobar(opiniones) || [];
       CE.ajustes = estado.ajustes;
       if (!estado.categorias.some((c) => c.id === estado.catActiva)) estado.catActiva = estado.categorias[0]?.id;
       pintar();
@@ -123,7 +138,7 @@
   // ---------- Estructura ----------
   const PESTANAS = [
     ['carta', '🌮', 'Carta', 'Speisekarte'], ['fotos', '📸', 'Fotos', 'Fotos'], ['datos', '🏠', 'Datos y horario', 'Daten & Zeiten'],
-    ['jefe', '🧔', 'Cara del jefe', 'Chef-Gesicht'], ['juegos', '🏆', 'Juegos y ranking', 'Spiele & Ranking'],
+    ['opiniones', '⭐', 'Reseñas', 'Bewertungen'], ['jefe', '🧔', 'Cara del jefe', 'Chef-Gesicht'], ['juegos', '🏆', 'Juegos y ranking', 'Spiele & Ranking'],
   ];
   function pintar() {
     $('[data-titulo]').textContent = L('Administración', 'Verwaltung');
@@ -131,7 +146,7 @@
       `<button type="button" data-pestana="${id}" aria-pressed="${id === pestana}">${ico} ${L(es, de)}</button>`).join('')}
       <a class="ver-web" href="../" target="_blank">↗ ${L('Ver la web', 'Website ansehen')}</a></nav>
       <section id="panel"></section>`;
-    ({ carta: pintarCarta, fotos: pintarFotos, datos: pintarDatos, jefe: pintarJefe, juegos: pintarJuegos })[pestana]();
+    ({ carta: pintarCarta, fotos: pintarFotos, datos: pintarDatos, opiniones: pintarOpiniones, jefe: pintarJefe, juegos: pintarJuegos })[pestana]();
   }
   raiz.addEventListener('click', (e) => {
     const b = e.target.closest('[data-pestana]');
@@ -166,7 +181,7 @@
       <ul class="lista-admin">${platos.map((x, i) => `
         <li class="${x.visible ? '' : 'oculto'}">
           <span class="mover"><button type="button" data-mover-plato="${x.id}" data-dir="-1" ${i ? '' : 'disabled'} aria-label="↑">↑</button><button type="button" data-mover-plato="${x.id}" data-dir="1" ${i < platos.length - 1 ? '' : 'disabled'} aria-label="↓">↓</button></span>
-          ${x.foto ? `<img src="${esc(x.foto.startsWith('http') ? x.foto : `../${x.foto}`)}" alt="">` : ''}
+          ${x.foto ? `<img src="${esc(urlImg(x.foto))}" alt="">` : ''}
           <span class="nombre"><b>${esc(x.nombre_es)}</b>${x.nombre_de && x.nombre_de !== x.nombre_es ? `<small>${esc(x.nombre_de)}</small>` : ''}
             ${x.sub_es ? `<small class="sub">${esc(x.sub_es)}</small>` : ''}</span>
           <span class="precio">${x.variantes?.length ? `${x.variantes.length} ${L('opciones', 'Varianten')}` : CE.precio(x.precio)}</span>
@@ -192,7 +207,7 @@
       <div class="dos">${campo('nombre_es', 'Nombre 🇲🇽', 'Name 🇲🇽', 'text', 'required')}${campo('nombre_de', 'Nombre 🇩🇪 (si cambia)', 'Name 🇩🇪 (falls anders)')}</div>
       <div class="dos">${area('desc_es', 'Descripción 🇲🇽', 'Beschreibung 🇲🇽')}${area('desc_de', 'Descripción 🇩🇪', 'Beschreibung 🇩🇪')}</div>
       <div class="tres">
-        ${campo('precio', 'Precio (€)', 'Preis (€)', 'number', 'step="0.1" min="0" required')}
+        ${campo('precio', 'Precio (€)', 'Preis (€)', 'number', 'step="0.01" min="0" required')}
         <label>${L('Categoría', 'Kategorie')}<select name="cat">${estado.categorias.map((c) => `<option value="${esc(c.id)}" ${c.id === v.cat ? 'selected' : ''}>${esc(c.nombre_es)}</option>`).join('')}</select></label>
         <label>${L('Picante', 'Schärfe')}<select name="picante">${[0, 1, 2, 3].map((n) => `<option value="${n}" ${Number(v.picante) === n ? 'selected' : ''}>${n ? '🌶️'.repeat(n) : L('No pica', 'Nicht scharf')}</option>`).join('')}</select></label>
       </div>
@@ -207,7 +222,7 @@
         <button class="enlace" type="button" data-nueva-variante>＋ ${L('Añadir variante', 'Variante hinzufügen')}</button>
       </fieldset>
       <fieldset><legend>${L('Foto (opcional)', 'Foto (optional)')}</legend>
-        <div class="foto-plato">${v.foto ? `<img src="${esc(v.foto.startsWith('http') ? v.foto : `../${v.foto}`)}" alt="">` : ''}
+        <div class="foto-plato">${v.foto ? `<img src="${esc(urlImg(v.foto))}" alt="">` : ''}
           <input type="file" accept="image/*" name="archivo">
           ${v.foto ? `<label class="check"><input type="checkbox" name="quitar_foto"> ${L('Quitar foto', 'Foto entfernen')}</label>` : ''}</div>
       </fieldset>
@@ -259,7 +274,7 @@
   function filaVariante(x) {
     return `<div class="variante"><input data-v="es" placeholder="🇲🇽 ${L('p. ej. Pollo', 'z. B. Pollo')}" value="${esc(x.es || '')}">
       <input data-v="de" placeholder="🇩🇪 ${L('p. ej. Hähnchen', 'z. B. Hähnchen')}" value="${esc(x.de || '')}">
-      <input data-v="precio" type="number" step="0.1" min="0" placeholder="€" value="${esc(x.precio ?? '')}">
+      <input data-v="precio" type="number" step="0.01" min="0" placeholder="€" value="${esc(x.precio ?? '')}">
       <button type="button" data-quitar-variante aria-label="✕">✕</button></div>`;
   }
 
@@ -370,7 +385,7 @@
       <p class="ayuda">${L('Las fotos se reducen automáticamente. Usa solo fotos propias o con permiso.', 'Fotos werden automatisch verkleinert. Nur eigene Fotos oder mit Erlaubnis verwenden.')}</p>
       <div class="rejilla-fotos">${estado.fotos.map((f, i) => `
         <div class="foto-admin" data-id="${f.id}">
-          <img src="${esc(f.url.startsWith('http') ? f.url : `../${f.url}`)}" alt="">
+          <img src="${esc(urlImg(f.url))}" alt="">
           <input data-campo="texto_es" value="${esc(f.texto_es || '')}" placeholder="🇲🇽 ${L('Pie de foto', 'Bildunterschrift')}">
           <input data-campo="texto_de" value="${esc(f.texto_de || '')}" placeholder="🇩🇪 ${L('Pie de foto', 'Bildunterschrift')}">
           <div class="acciones">
@@ -424,7 +439,11 @@
       <div class="dos">${campo('direccion', 'Dirección', 'Adresse')}${campo('cp_ciudad', 'CP y ciudad', 'PLZ & Ort')}</div>
       <div class="dos">${campo('telefono', 'Teléfono', 'Telefon', 'tel')}${campo('email', 'Email', 'E-Mail', 'email')}</div>
       <div class="dos">${campo('reserva_url', 'Enlace de reservas (TheFork…)', 'Reservierungslink (TheFork…)', 'url')}${campo('maps_url', 'Enlace de Google Maps', 'Google-Maps-Link', 'url')}</div>
-      <div class="tres">${campo('valoracion', 'Nota (p. ej. 9,0)', 'Bewertung (z. B. 9,0)')}${campo('valoracion_opiniones', 'Nº de opiniones', 'Anzahl Bewertungen', 'number')}${campo('valoracion_fuente', 'Fuente (TheFork, Google…)', 'Quelle (TheFork, Google…)')}</div>
+      <fieldset><legend>⭐ ${L('Notas en otras webs (salen en la portada)', 'Bewertungen auf anderen Seiten (auf der Startseite)')}</legend>
+        <p class="ayuda">${L('Copia la nota y el número de opiniones tal cual aparecen en cada web. Sin nota, se muestra solo el número de opiniones.', 'Note und Anzahl genau wie auf der jeweiligen Seite übernehmen. Ohne Note wird nur die Anzahl gezeigt.')}</p>
+        <div data-valoraciones>${(a.valoraciones || []).map(filaValoracion).join('')}</div>
+        <button class="enlace" type="button" data-nueva-valoracion>＋ ${L('Añadir web', 'Seite hinzufügen')}</button>
+      </fieldset>
       <fieldset><legend>🕒 ${L('Horario', 'Öffnungszeiten')}</legend>
         <p class="ayuda">${L('Formato 17:00. Para medianoche escribe 24:00; si cierras más tarde, p. ej. 01:00.', 'Format 17:00. Für Mitternacht 24:00 eintragen; bei späterem Schluss z. B. 01:00.')}</p>
         <div class="semana">${[1, 2, 3, 4, 5, 6, 0].map((d) => filaDia(d, CE.horario.valido(a.horario) ? a.horario[d] : null)).join('')}</div>
@@ -432,6 +451,22 @@
       <button class="boton" type="submit">💾 ${L('Guardar', 'Speichern')}</button>
     </form>`;
   }
+  function filaValoracion(v) {
+    const fuentes = ['Google', 'TheFork', 'Tripadvisor', 'Lieferando', 'Facebook'];
+    return `<div class="valoracion-fila">
+      <select data-v="fuente">${fuentes.map((f) => `<option ${v.fuente === f ? 'selected' : ''}>${f}</option>`).join('')}</select>
+      <input data-v="nota" value="${esc(v.nota || '')}" placeholder="${L('Nota (4,6)', 'Note (4,6)')}">
+      <input data-v="escala" value="${esc(v.escala || '5')}" placeholder="/5" aria-label="${L('Escala', 'Skala')}">
+      <input data-v="opiniones" value="${esc(v.opiniones || '')}" placeholder="${L('Opiniones (500+)', 'Bewertungen (500+)')}">
+      <input data-v="url" value="${esc(v.url || '')}" placeholder="https://…">
+      <button type="button" data-quitar-valoracion aria-label="✕">✕</button></div>`;
+  }
+  raiz.addEventListener('click', (e) => {
+    if (pestana !== 'datos') return;
+    if (e.target.closest('[data-nueva-valoracion]')) $('[data-valoraciones]').insertAdjacentHTML('beforeend', filaValoracion({}));
+    if (e.target.closest('[data-quitar-valoracion]')) e.target.closest('.valoracion-fila').remove();
+  });
+
   function filaDia(d, t) {
     return `<div class="dia" data-dia="${d}">
       <label class="check"><input type="checkbox" data-abierto ${t ? 'checked' : ''}> ${CE.horario.nombreDia(d)}</label>
@@ -454,10 +489,93 @@
       horario[Number(r.dataset.dia)] = t;
     });
     if (malo) { aviso(L('Revisa el horario: formato 17:00.', 'Öffnungszeiten prüfen: Format 17:00.'), true); return; }
-    const cambios = { ...d, valoracion_opiniones: d.valoracion_opiniones ? Number(d.valoracion_opiniones) : null, horario, actualizado: new Date().toISOString() };
+    const valoraciones = [...e.target.querySelectorAll('.valoracion-fila')].map((r) => Object.fromEntries([...r.querySelectorAll('[data-v]')].map((i) => [i.dataset.v, i.value.trim() || null])))
+      .filter((v) => v.fuente);
+    const cambios = { ...d, horario, valoraciones, actualizado: new Date().toISOString() };
     Object.keys(cambios).forEach((k) => { if (cambios[k] === '') cambios[k] = null; });
     cambios.instagram = (cambios.instagram || '').replace(/^@/, '') || null;
     try { comprobar(await sb.from('ajustes').upsert({ id: 1, ...cambios })); aviso(`✅ ${L('Guardado', 'Gespeichert')}`); await recargar(); } catch (err) { fallo(err); }
+  });
+
+  // ---------- Reseñas (Hall of Fame) ----------
+  function pintarOpiniones() {
+    const ops = estado.opiniones;
+    $('#panel').innerHTML = `
+      <div class="cabeza-lista"><h2>⭐ ${L('Hall of Fame: reseñas en la portada', 'Hall of Fame: Bewertungen auf der Startseite')}</h2>
+        <button class="boton" type="button" data-nueva-opinion>＋ ${L('Añadir reseña', 'Bewertung hinzufügen')}</button></div>
+      <p class="ayuda">⚠️ ${L('Solo reseñas reales, copiadas tal cual de Google, TheFork, etc. Usa el nombre de pila y la inicial. Inventarlas o retocarlas es ilegal en Alemania.',
+        'Nur echte Bewertungen, wörtlich von Google, TheFork usw. übernommen. Vorname + Initiale. Erfundene oder geänderte Bewertungen sind in Deutschland verboten.')}</p>
+      <ul class="lista-admin">${ops.map((o, i) => `
+        <li class="${o.visible === false ? 'oculto' : ''}">
+          <span class="mover"><button type="button" data-mover-op="${o.id}" data-dir="-1" ${i ? '' : 'disabled'}>↑</button><button type="button" data-mover-op="${o.id}" data-dir="1" ${i < ops.length - 1 ? '' : 'disabled'}>↓</button></span>
+          ${o.foto ? `<img src="${esc(urlImg(o.foto))}" alt="">` : ''}
+          <span class="nombre"><b>${esc(o.autor)} · ${esc(o.fuente)}</b><small>“${esc(o[`texto_${CE.idioma}`] || o.texto_original || '')}”</small></span>
+          <span class="acciones">
+            <button type="button" data-visible-op="${o.id}">${o.visible === false ? '🚫' : '👁️'}</button>
+            <button type="button" data-editar-op="${o.id}">✏️</button>
+            <button type="button" data-borrar-op="${o.id}">🗑️</button>
+          </span>
+        </li>`).join('')}</ul>
+      ${ops.length ? '' : `<p class="vacio">${L('Todavía no hay reseñas.', 'Noch keine Bewertungen.')}</p>`}`;
+  }
+
+  function formularioOpinion(op) {
+    const v = op || { fuente: 'Google', idioma: 'de', visible: true, fecha: new Date().toISOString().slice(0, 10) };
+    const campo = (n, es, de, tipo = 'text', extra = '') => `<label>${L(es, de)}<input type="${tipo}" name="${n}" value="${esc(v[n] ?? '')}" ${extra}></label>`;
+    const area = (n, es, de) => `<label>${L(es, de)}<textarea name="${n}" rows="3">${esc(v[n] ?? '')}</textarea></label>`;
+    const dlg = document.createElement('dialog');
+    dlg.className = 'dialogo';
+    dlg.innerHTML = `<form class="form-admin">
+      <h2>${op ? L('Editar reseña', 'Bewertung bearbeiten') : L('Nueva reseña', 'Neue Bewertung')}</h2>
+      <div class="tres">${campo('autor', 'Autor (p. ej. Thomas S.)', 'Autor (z. B. Thomas S.)', 'text', 'required maxlength="40"')}
+        <label>${L('Web', 'Seite')}<select name="fuente">${['Google', 'TheFork', 'Tripadvisor', 'Lieferando', 'Facebook'].map((f) => `<option ${v.fuente === f ? 'selected' : ''}>${f}</option>`).join('')}</select></label>
+        ${campo('fecha', 'Fecha', 'Datum', 'date')}</div>
+      <label>${L('Idioma en que se escribió', 'Originalsprache')}<select name="idioma">${[['de', 'Deutsch'], ['es', 'Español'], ['en', 'English']].map(([k, n]) => `<option value="${k}" ${v.idioma === k ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+      ${area('texto_original', 'Texto original si está en inglés u otro idioma (tal cual)', 'Originaltext, falls auf Englisch o. Ä. (wörtlich)')}
+      <div class="dos">${area('texto_de', 'Texto en alemán', 'Text auf Deutsch')}${area('texto_es', 'Texto en español', 'Text auf Spanisch')}</div>
+      <fieldset><legend>${L('Foto', 'Foto')}</legend>
+        <label>${L('Elegir de la galería', 'Aus der Galerie wählen')}<select name="foto"><option value="">—</option>${estado.fotos.map((f) => `<option value="${esc(f.url)}" ${v.foto === f.url ? 'selected' : ''}>${esc(f.texto_es || f.url.split('/').pop().slice(0, 40))}</option>`).join('')}
+          ${v.foto && !estado.fotos.some((f) => f.url === v.foto) ? `<option value="${esc(v.foto)}" selected>${L('Foto actual', 'Aktuelles Foto')}</option>` : ''}</select></label>
+        <label>${L('…o subir otra', '…oder eine andere hochladen')}<input type="file" accept="image/*" name="archivo"></label>
+      </fieldset>
+      <label class="check"><input type="checkbox" name="visible" ${v.visible !== false ? 'checked' : ''}> ${L('Visible en la portada', 'Auf der Startseite sichtbar')}</label>
+      <div class="botones-dialogo">
+        <button class="boton contorno" type="button" data-cerrar>${L('Cancelar', 'Abbrechen')}</button>
+        <button class="boton" type="submit">💾 ${L('Guardar', 'Speichern')}</button>
+      </div></form>`;
+    document.body.appendChild(dlg);
+    dlg.showModal();
+    dlg.addEventListener('close', () => dlg.remove());
+    dlg.addEventListener('click', (e) => { if (e.target.closest('[data-cerrar]')) dlg.close(); });
+    $('form', dlg).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(e.target));
+      const fila = {
+        autor: d.autor.trim(), fuente: d.fuente, fecha: d.fecha || null, idioma: d.idioma,
+        texto_original: d.texto_original.trim() || null, texto_de: d.texto_de.trim() || null, texto_es: d.texto_es.trim() || null,
+        foto: d.foto || null, visible: !!d.visible,
+      };
+      if (!fila.texto_de && !fila.texto_es && !fila.texto_original) { aviso(L('Escribe el texto de la reseña.', 'Bitte den Text eintragen.'), true); return; }
+      try {
+        const archivo = e.target.archivo.files[0];
+        if (archivo) fila.foto = (await subir(archivo, 'opiniones', { max: 900, cuadrado: true })).url;
+        if (op) comprobar(await sb.from('opiniones').update(fila).eq('id', op.id));
+        else comprobar(await sb.from('opiniones').insert({ ...fila, orden: estado.opiniones.length }));
+        dlg.close(); aviso(`✅ ${L('Guardado', 'Gespeichert')}`); await recargar();
+      } catch (err) { fallo(err); }
+    });
+  }
+  raiz.addEventListener('click', async (e) => {
+    if (pestana !== 'opiniones') return;
+    const b = e.target.closest('button'); if (!b) return;
+    const op = estado.opiniones.find((x) => String(x.id) === (b.dataset.editarOp || b.dataset.borrarOp || b.dataset.visibleOp));
+    try {
+      if ('nuevaOpinion' in b.dataset) formularioOpinion(null);
+      else if (b.dataset.editarOp) formularioOpinion(op);
+      else if (b.dataset.visibleOp) { comprobar(await sb.from('opiniones').update({ visible: op.visible === false }).eq('id', op.id)); await recargar(); }
+      else if (b.dataset.borrarOp) { if (confirm(L('¿Borrar esta reseña?', 'Diese Bewertung löschen?'))) { comprobar(await sb.from('opiniones').delete().eq('id', op.id)); await recargar(); } }
+      else if (b.dataset.moverOp) await moverFila('opiniones', estado.opiniones, b.dataset.moverOp, Number(b.dataset.dir));
+    } catch (err) { fallo(err); }
   });
 
   // ---------- Cara del jefe ----------

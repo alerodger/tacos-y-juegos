@@ -52,7 +52,8 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
       Symbolbild", [x] botón 📷 en el panel para hacer la foto con el móvil, [x] 95 prompts en
       `docs/prompts-fotos.md` + importador (`npm run fotos`); [ ] generar las imágenes (el servicio
       gratuito de IA probado no da calidad suficiente: hacerlas con ChatGPT/Gemini)
-- [ ] **E. Panel en modo demostración** (sin Supabase) + gestión de reseñas y notas
+- [x] **E. Panel en modo demostración** (sin Supabase; los cambios se ven en la web de ese
+      navegador) + gestión de reseñas (Hall of Fame) y notas de otras webs
 
 ## Pendiente de conseguir del cliente
 
