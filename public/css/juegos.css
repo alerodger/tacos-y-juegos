@@ -345,3 +345,19 @@ a.ficha:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,.25)
 .quiz-resultado { margin: 0; font-weight: 800; font-size: 1.2rem; }
 .quiz-resultado.bien { color: var(--verde); }
 .quiz-resultado.mal { color: var(--rojo); }
+
+/* Ranking general (Instagram) */
+.rk-ig { display: flex; align-items: center; border: 2px solid #d8c9b4; border-radius: 12px; background: #fff; padding-left: 12px; }
+.rk-ig:focus-within { border-color: var(--rojo); }
+.rk-ig span { font-weight: 800; color: var(--tinta-suave); }
+.rk-form .rk-ig input { border: 0 !important; padding-left: 4px !important; background: transparent; }
+.rk-mia { margin: 0; background: var(--tinta); color: #fff; border-radius: 12px; padding: 8px 14px; font-size: .95rem; width: 100%; max-width: 560px; text-align: center; }
+.rk-mia b { color: var(--vela); }
+.rk-mia.vacia { background: transparent; color: var(--tinta-suave); }
+.rk-mia-caja { width: 100%; display: grid; justify-items: center; }
+.rk-separador { background: transparent !important; justify-content: center; display: flex !important; color: var(--tinta-suave); padding: 0 !important; font-size: 1.4rem; line-height: 1; }
+.rk-lista li.podio.p1 { background: linear-gradient(90deg, #fff1c4, #fff); }
+.rk-lista li.podio.p2 { background: linear-gradient(90deg, #eceff3, #fff); }
+.rk-lista li.podio.p3 { background: linear-gradient(90deg, #f6dfcb, #fff); }
+.rk-demo { margin: 0; font-size: .75rem; font-weight: 800; letter-spacing: .08em; color: var(--rosa); text-align: center; }
+.rk-explica { margin: 0; font-size: .9rem; color: var(--tinta-suave); text-align: center; max-width: 480px; }

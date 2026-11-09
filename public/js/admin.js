@@ -475,7 +475,7 @@
 
   // ---------- Juegos: código del día, premios, ruleta y moderación ----------
   const juegosRanking = CE.catalogo.filter((j) => j.ranking);
-  let moderar = { juego: juegosRanking.find((j) => j.listo)?.id || 'ahorcado', periodo: 'semana' };
+  let moderar = { juego: '', periodo: 'semana' };
 
   async function pintarJuegos() {
     const a = estado.ajustes;
@@ -520,10 +520,21 @@
 
       <div class="caja-admin">
         <h2>🏆 ${L('Ranking y moderación', 'Ranking & Moderation')}</h2>
+        <form class="form-admin" data-form-modo>
+          <label>${L('Cómo se suma el ranking general', 'Wie das Gesamtranking zählt')}
+            <select name="ranking_modo">
+              <option value="mejor" ${a.ranking_modo !== 'suma' ? 'selected' : ''}>${L('La mejor partida de cada juego (recomendado: premia jugar a todos)', 'Beste Runde je Spiel (empfohlen: belohnt, alle zu spielen)')}</option>
+              <option value="suma" ${a.ranking_modo === 'suma' ? 'selected' : ''}>${L('Todas las partidas (premia jugar muchas veces)', 'Alle Runden (belohnt, oft zu spielen)')}</option>
+            </select></label>
+        </form>
         <div class="fila-herramientas">
-          <select data-mod-juego>${juegosRanking.map((j) => `<option value="${j.id}" ${j.id === moderar.juego ? 'selected' : ''}>${j.icono} ${esc(CE.tx(j, 'nombre'))}</option>`).join('')}</select>
           <select data-mod-periodo>${['dia', 'semana', 'mes'].map((p) => `<option value="${p}" ${p === moderar.periodo ? 'selected' : ''}>${L({ dia: 'Hoy', semana: 'Esta semana', mes: 'Este mes' }[p], { dia: 'Heute', semana: 'Diese Woche', mes: 'Diesen Monat' }[p])}</option>`).join('')}</select>
-          <button class="boton pequeno contorno" type="button" data-copiar>📋 ${L('Copiar ganadores', 'Gewinner kopieren')}</button>
+          <button class="boton pequeno contorno" type="button" data-copiar>📋 ${L('Copiar el top 3 para Instagram', 'Top 3 für Instagram kopieren')}</button>
+        </div>
+        <div data-top-global><p class="vacio">…</p></div>
+        <h3>${L('Partidas guardadas', 'Gespeicherte Runden')}</h3>
+        <div class="fila-herramientas">
+          <select data-mod-juego><option value="">${L('Todos los juegos', 'Alle Spiele')}</option>${juegosRanking.map((j) => `<option value="${j.id}" ${j.id === moderar.juego ? 'selected' : ''}>${j.icono} ${esc(CE.tx(j, 'nombre'))}</option>`).join('')}</select>
         </div>
         <div data-moderacion><p class="vacio">…</p></div>
       </div>`;
@@ -562,7 +573,6 @@
   function filaPremio(p) {
     return `<div class="premio" data-id="${p.id || ''}">
       <select data-p="periodo">${['dia', 'semana', 'mes'].map((x) => `<option value="${x}" ${p.periodo === x ? 'selected' : ''}>${L({ dia: 'Diario', semana: 'Semanal', mes: 'Mensual' }[x], { dia: 'Täglich', semana: 'Wöchentlich', mes: 'Monatlich' }[x])}</option>`).join('')}</select>
-      <select data-p="juego"><option value="">${L('Todos los juegos', 'Alle Spiele')}</option>${juegosRanking.map((j) => `<option value="${j.id}" ${p.juego === j.id ? 'selected' : ''}>${esc(CE.tx(j, 'nombre'))}</option>`).join('')}</select>
       <input data-p="texto_es" value="${esc(p.texto_es || '')}" placeholder="🇲🇽 ${L('p. ej. Un chupito gratis', 'z. B. Un chupito gratis')}">
       <input data-p="texto_de" value="${esc(p.texto_de || '')}" placeholder="🇩🇪 z. B. Ein Gratis-Shot">
       <label class="check"><input type="checkbox" data-p="activo" ${p.activo !== false ? 'checked' : ''}> ${L('Activo', 'Aktiv')}</label>
@@ -576,14 +586,22 @@
     return d.toISOString();
   };
   let filasModeracion = [];
+  let topGlobal = [];
   async function cargarModeracion() {
     const cont = $('[data-moderacion]'); if (!cont) return;
     try {
-      filasModeracion = comprobar(await sb.from('puntuaciones').select('*').eq('juego', moderar.juego)
-        .gte('creado', desdePeriodo(moderar.periodo)).order('puntos', { ascending: false }).limit(100));
-      cont.innerHTML = filasModeracion.length ? `<table class="tabla-admin"><thead><tr><th>#</th><th>${L('Apodo', 'Spitzname')}</th><th>Instagram</th><th>${L('Puntos', 'Punkte')}</th><th>${L('Fecha', 'Datum')}</th><th></th></tr></thead><tbody>
-        ${filasModeracion.map((f, i) => `<tr class="${f.oculto ? 'oculto' : ''}"><td>${i + 1}</td><td>${esc(f.alias)}</td>
-          <td>${f.instagram ? `<a href="https://www.instagram.com/${esc(f.instagram)}/" target="_blank" rel="noopener">@${esc(f.instagram)}</a>` : '—'}</td>
+      const top = comprobar(await sb.rpc('ranking_global', { p_periodo: moderar.periodo, p_limite: 15 })) || [];
+      topGlobal = top;
+      $('[data-top-global]').innerHTML = top.length ? `<table class="tabla-admin"><thead><tr><th>#</th><th>Instagram</th><th>${L('Puntos', 'Punkte')}</th><th>${L('Juegos', 'Spiele')}</th><th>${L('Partidas', 'Runden')}</th></tr></thead><tbody>
+        ${top.map((f) => `<tr><td>${f.posicion}</td><td><a href="https://www.instagram.com/${esc(f.instagram)}/" target="_blank" rel="noopener">@${esc(f.instagram)}</a></td><td><b>${f.puntos}</b></td><td>${f.juegos}</td><td>${f.partidas}</td></tr>`).join('')}
+        </tbody></table>` : `<p class="vacio">${L('Nadie ha puntuado todavía en este periodo.', 'In diesem Zeitraum hat noch niemand gepunktet.')}</p>`;
+      let q = sb.from('puntuaciones').select('*').gte('creado', desdePeriodo(moderar.periodo));
+      if (moderar.juego) q = q.eq('juego', moderar.juego);
+      filasModeracion = comprobar(await q.order('puntos', { ascending: false }).limit(100));
+      const nombreJuego = (id) => CE.catalogo.find((j) => j.id === id)?.icono || id;
+      cont.innerHTML = filasModeracion.length ? `<table class="tabla-admin"><thead><tr><th>${L('Juego', 'Spiel')}</th><th>Instagram</th><th>${L('Puntos', 'Punkte')}</th><th>${L('Fecha', 'Datum')}</th><th></th></tr></thead><tbody>
+        ${filasModeracion.map((f) => `<tr class="${f.oculto ? 'oculto' : ''}"><td title="${esc(f.juego)}">${nombreJuego(f.juego)}</td>
+          <td><a href="https://www.instagram.com/${esc(f.instagram)}/" target="_blank" rel="noopener">@${esc(f.instagram)}</a></td>
           <td><b>${f.puntos}</b></td><td>${new Date(f.creado).toLocaleString(CE.idioma === 'de' ? 'de-DE' : 'es-ES', { dateStyle: 'short', timeStyle: 'short' })}</td>
           <td><button type="button" data-ocultar="${f.id}" title="${L('Ocultar/mostrar', 'Aus-/einblenden')}">${f.oculto ? '🚫' : '👁️'}</button><button type="button" data-borrar-punt="${f.id}">🗑️</button></td></tr>`).join('')}
         </tbody></table>` : `<p class="vacio">${L('Sin puntuaciones en este periodo.', 'Keine Punkte in diesem Zeitraum.')}</p>`;
@@ -594,6 +612,13 @@
     if (e.target.matches('[data-qr-url]')) $('[data-qr-vista]').innerHTML = svgQr(e.target.value.trim());
     if (e.target.matches('[data-mod-juego]')) { moderar.juego = e.target.value; cargarModeracion(); }
     if (e.target.matches('[data-mod-periodo]')) { moderar.periodo = e.target.value; cargarModeracion(); }
+    if (e.target.matches('[name=ranking_modo]')) {
+      const modo = e.target.value;
+      (async () => {
+        comprobar(await sb.from('ajustes').update({ ranking_modo: modo }).eq('id', 1));
+        estado.ajustes.ranking_modo = modo; aviso(`✅ ${L('Guardado', 'Gespeichert')}`); cargarModeracion();
+      })().catch(fallo);
+    }
   });
   raiz.addEventListener('submit', async (e) => {
     if (pestana !== 'juegos' || !e.target.matches('[data-form-codigo], [data-form-promo]')) return;
@@ -631,7 +656,7 @@
           r.remove(); aviso(`🗑️ ${L('Borrado', 'Gelöscht')}`); return;
         }
         const val = (n) => $(`[data-p=${n}]`, r);
-        const fila = { periodo: val('periodo').value, juego: val('juego').value || null, texto_es: val('texto_es').value.trim(), texto_de: val('texto_de').value.trim() || null, activo: val('activo').checked };
+        const fila = { periodo: val('periodo').value, juego: null, texto_es: val('texto_es').value.trim(), texto_de: val('texto_de').value.trim() || null, activo: val('activo').checked };
         if (!fila.texto_es) { aviso(L('Escribe el premio en español.', 'Bitte den Preis auf Spanisch eintragen.'), true); return; }
         if (id) comprobar(await sb.from('premios').update(fila).eq('id', id));
         else comprobar(await sb.from('premios').insert({ ...fila, orden: estado.premios.length }));
@@ -643,13 +668,7 @@
         if (!confirm(L('¿Borrar esta puntuación?', 'Diesen Eintrag löschen?'))) return;
         comprobar(await sb.from('puntuaciones').delete().eq('id', b.dataset.borrarPunt)); cargarModeracion();
       } else if ('copiar' in b.dataset) {
-        const vistos = new Set(); const top = [];
-        for (const f of filasModeracion) {
-          const k = (f.instagram || f.alias).toLowerCase();
-          if (!f.oculto && !vistos.has(k)) { vistos.add(k); top.push(f); }
-          if (top.length === 3) break;
-        }
-        const texto = top.map((f, i) => `${['🥇', '🥈', '🥉'][i]} ${f.alias}${f.instagram ? ` (@${f.instagram})` : ''} – ${f.puntos}`).join('\n');
+        const texto = topGlobal.slice(0, 3).map((f, i) => `${['🥇', '🥈', '🥉'][i]} @${f.instagram} – ${f.puntos}`).join('\n');
         await navigator.clipboard.writeText(texto);
         aviso(`📋 ${L('Copiado', 'Kopiert')}`);
       }

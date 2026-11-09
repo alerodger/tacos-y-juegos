@@ -59,7 +59,7 @@ CE.juegos.quiz = {
       if (respondida !== null) return;
       respondida = i;
       clearInterval(tic);
-      if (i === 0) { aciertos++; puntos += 100 + Math.max(0, Math.ceil((fin - Date.now()) / 1000)) * 10; }
+      if (i === 0) { aciertos++; puntos += 50 + Math.max(0, Math.ceil((fin - Date.now()) / 1000)) * 5; }
       pintar();
       setTimeout(() => {
         n++;

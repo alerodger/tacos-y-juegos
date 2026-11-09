@@ -52,6 +52,7 @@ CE.record = (juego, puntos) => {
 
 // Pantalla de fin de partida sobre el escenario del juego
 CE.finPartida = (escenario, { juego, puntos, alOtra }) => {
+  puntos = Math.min(puntos, CE.maxPuntos?.[juego] ?? puntos); // mismo tope que la base de datos
   const { mejor, nuevo } = CE.record(juego, puntos);
   const capa = document.createElement('div');
   capa.className = 'fin-partida';

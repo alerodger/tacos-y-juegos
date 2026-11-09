@@ -56,3 +56,6 @@ CE.catalogo = [
     nombre_es: 'Lluvia de tacos', nombre_de: 'Taco-Regen',
     desc_es: 'Atrapa los tacos que caen del cielo y esquiva los chiles.', desc_de: 'Fang die Tacos, die vom Himmel fallen, und weich den Chilis aus.' },
 ];
+
+// Tope de puntos por partida (igual que max_puntos() en supabase/esquema.sql)
+CE.maxPuntos = { ahorcado: 4000, memoria: 1200, quiz: 1250, pinata: 4000, lluvia: 6000 };

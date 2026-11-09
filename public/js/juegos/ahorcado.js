@@ -38,7 +38,7 @@ CE.juegos.ahorcado = {
       if (!acierto) fallos++;
       if (!letrasQueFaltan().length) {
         estado = 'ganada'; acertadas++;
-        puntos += 10 + 5 * (VIDAS - fallos);
+        puntos += 20 + 10 * (VIDAS - fallos);
       } else if (fallos >= VIDAS) {
         estado = 'perdida';
       }

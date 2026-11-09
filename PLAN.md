@@ -36,6 +36,22 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 - [ ] **9. Producción**: Cloudflare Pages + dominio de Hostinger (DNS), SMTP propio, cron para que
       Supabase gratis no se pause, entrega de cuentas al cliente
 
+## Ronda 2 (cambios del socio, 09/11/2026)
+
+- [x] **A. Ranking global**: suma de puntos de todos los juegos con 🏆 por Instagram (día / semana /
+      mes), top 15, posición propia aunque no se esté en el top, escalas de puntos igualadas
+      (~1.000–1.500 por buena partida), tope por juego, modo "mejor partida de cada juego" o
+      "todas las partidas" (elige el dueño), modo DEMO sin Supabase
+- [ ] **B. Salón de juegos**: jugadores y casilla de juegos de beber antes de elegir (los juegos
+      que no encajan bajan y se ponen grises), tarjetas con vista previa tipo CrazyGames, nombres
+      más atractivos, top 3 en una tele antigua con interferencias, juego del Impostor
+- [ ] **C. Portada**: botones fijos (carta, juegos, Instagram), botón de jugar que tiembla, notas de
+      Google / Lieferando / TripAdvisor / TheFork, top 3 en la tele, Hall of Fame (reseñas reales +
+      fotos), pixel art de una pareja bailando en el tequila bar
+- [ ] **D. Carta con fotos**: foto de cada plato y cóctel (IA, marcada como "Symbolbild"),
+      ampliable al tocar; en el panel, cambiarla con la cámara del móvil
+- [ ] **E. Panel en modo demostración** (sin Supabase) + gestión de reseñas y notas
+
 ## Pendiente de conseguir del cliente
 
 - Logo en vectorial / alta resolución (ahora solo hay uno de 150 px)

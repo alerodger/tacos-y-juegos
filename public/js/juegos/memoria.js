@@ -15,7 +15,7 @@ CE.juegos.memoria = {
       pintar();
     }
     const segundos = () => (inicio ? Math.floor((Date.now() - inicio) / 1000) : 0);
-    const calcular = () => Math.max(50, Math.round(1500 - segundos() * 12 - fallos * 25));
+    const calcular = () => Math.max(50, Math.round(1200 - segundos() * 8 - fallos * 20));
 
     function pintar() {
       escenario.innerHTML = `<div class="memoria">

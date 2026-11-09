@@ -121,16 +121,17 @@ drop policy if exists "premios: admin escribe" on premios;
 create policy "premios: admin escribe" on premios for all using (es_admin()) with check (es_admin());
 
 -- ---------- Puntuaciones de los juegos ----------
+-- Cada partida guardada. El jugador se identifica por su Instagram (sin @, en minúsculas).
 create table if not exists puntuaciones (
   id bigint generated always as identity primary key,
   juego text not null,
-  alias text not null check (char_length(alias) between 2 and 20),
-  instagram text check (instagram is null or instagram ~ '^[A-Za-z0-9._]{1,30}$'),
+  instagram text not null check (instagram ~ '^[a-z0-9._]{1,30}$'),
   puntos int not null check (puntos between 0 and 100000),
   oculto boolean not null default false,        -- el admin puede ocultar trampas o insultos
   creado timestamptz not null default now()
 );
-create index if not exists puntuaciones_juego_fecha on puntuaciones (juego, creado desc);
+create index if not exists puntuaciones_fecha on puntuaciones (creado desc);
+create index if not exists puntuaciones_instagram on puntuaciones (instagram, creado desc);
 alter table puntuaciones enable row level security;
 drop policy if exists "puntuaciones: lectura pública de las visibles" on puntuaciones;
 create policy "puntuaciones: lectura pública de las visibles" on puntuaciones for select using (not oculto or es_admin());
@@ -140,22 +141,42 @@ drop policy if exists "puntuaciones: admin borra" on puntuaciones;
 create policy "puntuaciones: admin borra" on puntuaciones for delete using (es_admin());
 -- No hay política de INSERT: solo se puede puntuar mediante guardar_puntuacion()
 
--- Guarda una puntuación comprobando el código del día, el consentimiento y un límite de envíos.
+-- Cómo se suma el ranking general: 'mejor' = la mejor partida de cada juego; 'suma' = todas las partidas
+alter table ajustes add column if not exists ranking_modo text not null default 'mejor';
+
+-- Puntuación máxima creíble de cada juego (lo que pase de aquí es trampa)
+create or replace function max_puntos(p_juego text) returns int
+language sql immutable as $$
+  select case p_juego
+    when 'ahorcado' then 4000 when 'memoria' then 1200 when 'quiz' then 1250
+    when 'pinata' then 4000 when 'lluvia' then 6000 else 0 end;
+$$;
+
+-- Inicio del día / semana (lunes) / mes en hora de Alemania
+create or replace function inicio_periodo(p_periodo text) returns timestamptz
+language sql stable as $$
+  select date_trunc(case p_periodo when 'dia' then 'day' when 'mes' then 'month' else 'week' end,
+                    now() at time zone 'Europe/Berlin') at time zone 'Europe/Berlin';
+$$;
+
+-- Versiones anteriores (con apodo): se sustituyen
+drop function if exists guardar_puntuacion(text, text, text, int, text, boolean);
+drop function if exists ranking(text, text, int);
+
+-- Guarda una partida comprobando el código del día, el consentimiento y un límite de envíos.
 -- Devuelve 'ok' o un código de error: 'codigo', 'consentimiento', 'juego', 'datos', 'espera'.
 create or replace function guardar_puntuacion(
-  p_juego text, p_alias text, p_instagram text, p_puntos int, p_codigo text, p_consiente boolean
+  p_juego text, p_instagram text, p_puntos int, p_codigo text, p_consiente boolean
 ) returns text
 language plpgsql security definer set search_path = public as $$
 declare
-  v_ig text := nullif(lower(regexp_replace(coalesce(p_instagram, ''), '^@', '')), '');
-  v_alias text := btrim(coalesce(p_alias, ''));
+  v_ig text := lower(regexp_replace(btrim(coalesce(p_instagram, '')), '^@', ''));
   v_pide_codigo boolean;
   v_codigo text;
 begin
-  if p_juego not in ('ahorcado', 'memoria', 'quiz', 'pinata', 'lluvia') then return 'juego'; end if;
+  if max_puntos(p_juego) = 0 then return 'juego'; end if;
   if not coalesce(p_consiente, false) then return 'consentimiento'; end if;
-  if char_length(v_alias) not between 2 and 20 or p_puntos is null or p_puntos not between 0 and 100000 then return 'datos'; end if;
-  if v_ig is not null and v_ig !~ '^[a-z0-9._]{1,30}$' then return 'datos'; end if;
+  if v_ig !~ '^[a-z0-9._]{1,30}$' or p_puntos is null or p_puntos < 0 or p_puntos > max_puntos(p_juego) then return 'datos'; end if;
 
   select ranking_con_codigo into v_pide_codigo from ajustes where id = 1;
   select codigo_juego into v_codigo from secretos where id = 1;
@@ -164,36 +185,55 @@ begin
     return 'codigo';
   end if;
 
-  -- Límite: como mucho 1 puntuación cada 20 segundos por alias/Instagram y juego
-  if exists (
-    select 1 from puntuaciones
-    where juego = p_juego and creado > now() - interval '20 seconds'
-      and lower(coalesce(instagram, alias)) = lower(coalesce(v_ig, v_alias))
-  ) then return 'espera'; end if;
+  -- Límite: como mucho 1 partida cada 20 segundos por Instagram y juego
+  if exists (select 1 from puntuaciones where juego = p_juego and instagram = v_ig and creado > now() - interval '20 seconds') then
+    return 'espera';
+  end if;
 
-  insert into puntuaciones (juego, alias, instagram, puntos) values (p_juego, v_alias, v_ig, p_puntos);
+  insert into puntuaciones (juego, instagram, puntos) values (p_juego, v_ig, p_puntos);
   return 'ok';
 end;
 $$;
-grant execute on function guardar_puntuacion(text, text, text, int, text, boolean) to anon, authenticated;
+grant execute on function guardar_puntuacion(text, text, int, text, boolean) to anon, authenticated;
 
--- Ranking: la mejor puntuación de cada jugador en el periodo (hora de Alemania)
-create or replace function ranking(p_juego text, p_periodo text, p_limite int default 10)
-returns table (alias text, instagram text, puntos int, creado timestamptz)
+-- Totales de cada jugador en el periodo, sumando todos los juegos
+create or replace function ranking_totales(p_periodo text)
+returns table (instagram text, puntos bigint, partidas int, juegos int, ultima timestamptz)
 language sql stable set search_path = public as $$
-  with desde as (
-    select (date_trunc(case p_periodo when 'dia' then 'day' when 'mes' then 'month' else 'week' end,
-            now() at time zone 'Europe/Berlin') at time zone 'Europe/Berlin') as t
-  ), mejores as (
-    select distinct on (lower(coalesce(p.instagram, p.alias)))
-      p.alias, p.instagram, p.puntos, p.creado
-    from puntuaciones p, desde
-    where p.juego = p_juego and not p.oculto and p.creado >= desde.t
-    order by lower(coalesce(p.instagram, p.alias)), p.puntos desc, p.creado
+  with por_juego as (
+    select p.instagram, p.juego,
+      case when coalesce((select a.ranking_modo from ajustes a where a.id = 1), 'mejor') = 'suma'
+           then sum(p.puntos) else max(p.puntos) end as puntos,
+      count(*) as partidas, max(p.creado) as ultima
+    from puntuaciones p
+    where not p.oculto and p.creado >= inicio_periodo(p_periodo)
+    group by p.instagram, p.juego
   )
-  select * from mejores order by puntos desc, creado limit least(greatest(p_limite, 1), 100);
+  select instagram, sum(puntos)::bigint, sum(partidas)::int, count(*)::int, max(ultima)
+  from por_juego group by instagram;
 $$;
-grant execute on function ranking(text, text, int) to anon, authenticated;
+
+-- Ranking general (top N). A igualdad de puntos va antes quien llegó primero.
+create or replace function ranking_global(p_periodo text, p_limite int default 15)
+returns table (posicion bigint, instagram text, puntos bigint, partidas int, juegos int)
+language sql stable set search_path = public as $$
+  select row_number() over (order by t.puntos desc, t.ultima), t.instagram, t.puntos, t.partidas, t.juegos
+  from ranking_totales(p_periodo) t
+  order by 1 limit least(greatest(p_limite, 1), 100);
+$$;
+grant execute on function ranking_global(text, int) to anon, authenticated;
+
+-- Posición de un jugador aunque no esté en el top
+create or replace function mi_posicion(p_instagram text, p_periodo text)
+returns table (posicion bigint, puntos bigint, jugadores bigint)
+language sql stable set search_path = public as $$
+  select x.pos, x.puntos, x.n from (
+    select t.instagram, t.puntos, row_number() over (order by t.puntos desc, t.ultima) as pos, count(*) over () as n
+    from ranking_totales(p_periodo) t
+  ) x
+  where x.instagram = lower(regexp_replace(btrim(coalesce(p_instagram, '')), '^@', ''));
+$$;
+grant execute on function mi_posicion(text, text) to anon, authenticated;
 
 -- Privacidad: las puntuaciones de más de 6 meses se borran (ejecutar a mano o con pg_cron)
 create or replace function limpiar_puntuaciones() returns void

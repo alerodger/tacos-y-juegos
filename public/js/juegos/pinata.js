@@ -105,13 +105,13 @@ CE.juegos.pinata = {
       const x = e.clientX - r.left; const y = e.clientY - r.top;
       const p = geometria();
       if (Math.hypot(x - p.x, y - p.y) < p.r * 1.6) {
-        const suma = 10 * combo;
-        puntos += suma; golpes++; combo = Math.min(combo + 1, 10); sacudida = 14;
+        const suma = 5 * combo;
+        puntos += suma; golpes++; combo = Math.min(combo + 1, 5); sacudida = 14;
         textos.push({ txt: `+${suma}`, x, y: y - 20, s: 30, c: '#ffd23f', vida: 1 });
         lluviaCaramelos(p.x, p.y, 3);
         if (golpes % 12 === 0) {
-          puntos += 100; color++; lluviaCaramelos(p.x, p.y, 26);
-          textos.push({ txt: CE.L({ es: '¡SE ROMPIÓ! +100', de: 'KAPUTT! +100' }), x: medida.w / 2, y: medida.h * 0.75, s: 44, c: '#e93d8f', vida: 1.6 });
+          puntos += 50; color++; lluviaCaramelos(p.x, p.y, 26);
+          textos.push({ txt: CE.L({ es: '¡SE ROMPIÓ! +50', de: 'KAPUTT! +50' }), x: medida.w / 2, y: medida.h * 0.75, s: 44, c: '#e93d8f', vida: 1.6 });
           navigator.vibrate?.(80);
         }
       } else {
