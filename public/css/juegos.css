@@ -455,3 +455,9 @@ a.ficha:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,.25)
 .imp-debate p { margin: 0; max-width: 460px; }
 .imp-reloj { font: 400 3rem var(--fuente-titulo); color: var(--rojo); }
 .imp-revelado { font-size: 1.6rem; }
+
+/* La mesa no debe desbordarse en móvil: las columnas pueden encoger por debajo del ancho del campo */
+.mesa > * { min-width: 0; }
+.mesa .jug-form input { flex: 1 1 0; width: 100%; min-width: 0; }
+.mesa .jug-form .boton { flex: 0 0 auto; white-space: nowrap; }
+@media (max-width: 360px) { .mesa .jug-form .boton { padding: .8em 1em; } }
