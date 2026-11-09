@@ -112,3 +112,4 @@ label.check input { width: 18px; height: 18px; accent-color: var(--rojo); }
 .dia:has([data-abierto]:not(:checked)) input:not([type="checkbox"]) { opacity: .35; }
 .qr-vista { width: 180px; background: #fff; border: 1px solid #eee3d5; border-radius: 12px; padding: 8px; }
 .qr-vista svg { display: block; width: 100%; height: auto; }
+.acciones .camara { display: inline-grid; place-items: center; min-width: 32px; height: 30px; border-radius: 8px; background: var(--vela); cursor: pointer; font-size: .95rem; }

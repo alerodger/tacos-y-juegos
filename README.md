@@ -92,6 +92,16 @@ npm install          # solo la primera vez (herramientas de desarrollo)
 npm run portadas     # o: node scripts/portadas.mjs http://localhost:8766/ impostor ruleta
 ```
 
+## Fotos de la carta
+
+- `npm run prompts` genera `docs/prompts-fotos.md`: un prompt por plato o cóctel sin foto, con el
+  mismo estilo, para crear las imágenes con ChatGPT o Gemini.
+- Se guardan con el nombre de archivo indicado en una carpeta y `npm run fotos -- <carpeta>` las
+  recorta, las pasa a WebP en `public/assets/platos/` y las asigna (`public/js/fotos-platos.js`).
+  Después, `npm run semilla` para llevarlas también a Supabase. Con `--reales` no se marcan como IA.
+- En la web, las fotos de IA llevan la etiqueta "Foto ilustrativa / Symbolbild". Desde el panel, el
+  botón 📷 de cada plato abre la cámara del móvil y sustituye la foto (y quita la etiqueta).
+
 ## Probar en local
 
 ```

@@ -3,7 +3,9 @@
   "description": "Solo herramientas de desarrollo (la web no necesita compilación)",
   "scripts": {
     "semilla": "node scripts/generar-semilla.mjs",
-    "portadas": "node scripts/portadas.mjs"
+    "portadas": "node scripts/portadas.mjs",
+    "prompts": "node scripts/prompts-fotos.mjs",
+    "fotos": "node scripts/importar-fotos.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.48.0",

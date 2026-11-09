@@ -257,6 +257,13 @@ window.CE = window.CE || {};
   I('Cappuccino', 4.2, null);
   I(['Té', 'Tee'], 3.9, null, { opciones_es: 'Menta, manzanilla, frutas, negro o verde', opciones_de: 'Pfefferminz, Kamille, Früchte, Schwarz oder Grün' });
 
+  // Fotos de los platos importadas con scripts/importar-fotos.mjs (public/js/fotos-platos.js)
+  CE.slug = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  platos.forEach((p) => {
+    const f = (CE.fotosPlatos || {})[CE.slug(p.nombre_es)];
+    if (f && !p.foto) { p.foto = f.url; p.foto_ia = !!f.ia; }
+  });
+
   CE.demo = {
     ajustes: {
       nombre: 'Cantina Ensenada',

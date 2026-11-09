@@ -84,6 +84,8 @@ create table if not exists platos (
   orden int not null default 0
 );
 create index if not exists platos_cat_orden on platos (cat, orden);
+-- true = foto generada con IA (se marca "Foto ilustrativa / Symbolbild" en la carta)
+alter table platos add column if not exists foto_ia boolean not null default false;
 alter table platos enable row level security;
 drop policy if exists "platos: lectura pública de los visibles" on platos;
 create policy "platos: lectura pública de los visibles" on platos for select using (visible or es_admin());

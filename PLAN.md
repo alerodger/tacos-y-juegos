@@ -48,8 +48,10 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 - [x] **C. Portada**: botones fijos (carta, juegos, Instagram), botón de jugar que tiembla, notas de
       Google / Lieferando / TripAdvisor / TheFork, top 3 en la tele, Hall of Fame (reseñas reales +
       fotos), pixel art de una pareja bailando en el tequila bar
-- [ ] **D. Carta con fotos**: foto de cada plato y cóctel (IA, marcada como "Symbolbild"),
-      ampliable al tocar; en el panel, cambiarla con la cámara del móvil
+- [~] **D. Carta con fotos**: [x] fotos ampliables con visor y etiqueta "Foto ilustrativa /
+      Symbolbild", [x] botón 📷 en el panel para hacer la foto con el móvil, [x] 95 prompts en
+      `docs/prompts-fotos.md` + importador (`npm run fotos`); [ ] generar las imágenes (el servicio
+      gratuito de IA probado no da calidad suficiente: hacerlas con ChatGPT/Gemini)
 - [ ] **E. Panel en modo demostración** (sin Supabase) + gestión de reseñas y notas
 
 ## Pendiente de conseguir del cliente

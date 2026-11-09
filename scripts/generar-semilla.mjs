@@ -8,7 +8,8 @@ import { fileURLToPath } from 'node:url';
 const raiz = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ctx = { window: {} };
 vm.createContext(ctx);
-vm.runInContext(`var CE = window.CE = {};\n${fs.readFileSync(path.join(raiz, 'public/js/demo.js'), 'utf8')}`, ctx);
+const manifiesto = path.join(raiz, 'public/js/fotos-platos.js');
+vm.runInContext(`var CE = window.CE = {};\n${fs.existsSync(manifiesto) ? fs.readFileSync(manifiesto, 'utf8') : ''}\n${fs.readFileSync(path.join(raiz, 'public/js/demo.js'), 'utf8')}`, ctx);
 const { ajustes, categorias, platos, fotos, opiniones } = ctx.window.CE.demo;
 
 const q = (v) => {
@@ -25,7 +26,7 @@ const colsAjustes = ['id', 'nombre', 'eslogan_es', 'eslogan_de', 'direccion', 'c
   'promo_ruleta_es', 'promo_ruleta_de', 'valoraciones'];
 const colsCat = ['id', 'grupo', 'icono', 'nombre_es', 'nombre_de', 'nota_es', 'nota_de', 'lista', 'orden'];
 const colsPlato = ['cat', 'sub_es', 'sub_de', 'nombre_es', 'nombre_de', 'desc_es', 'desc_de', 'precio', 'variantes',
-  'opciones_es', 'opciones_de', 'picante', 'veg', 'vegano', 'destacado', 'foto', 'orden'];
+  'opciones_es', 'opciones_de', 'picante', 'veg', 'vegano', 'destacado', 'foto', 'foto_ia', 'orden'];
 const colsFoto = ['url', 'texto_es', 'texto_de', 'ancho', 'orden'];
 const colsOpinion = ['autor', 'fuente', 'fecha', 'idioma', 'texto_es', 'texto_de', 'texto_original', 'foto', 'url', 'orden'];
 
@@ -43,7 +44,7 @@ insert into categorias (${colsCat.join(', ')}) values
 ${categorias.map((c, i) => fila(colsCat, { lista: false, ...c, orden: i })).join(',\n')};
 
 insert into platos (${colsPlato.join(', ')}) values
-${platos.map((p, i) => fila(colsPlato, { variantes: [], picante: 0, veg: false, vegano: false, destacado: false, ...p, orden: i })).join(',\n')};
+${platos.map((p, i) => fila(colsPlato, { variantes: [], picante: 0, veg: false, vegano: false, destacado: false, foto_ia: false, ...p, orden: i })).join(',\n')};
 
 delete from fotos;
 insert into fotos (${colsFoto.join(', ')}) values

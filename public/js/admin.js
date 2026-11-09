@@ -170,8 +170,9 @@
           <span class="nombre"><b>${esc(x.nombre_es)}</b>${x.nombre_de && x.nombre_de !== x.nombre_es ? `<small>${esc(x.nombre_de)}</small>` : ''}
             ${x.sub_es ? `<small class="sub">${esc(x.sub_es)}</small>` : ''}</span>
           <span class="precio">${x.variantes?.length ? `${x.variantes.length} ${L('opciones', 'Varianten')}` : CE.precio(x.precio)}</span>
-          <span class="marcas">${x.destacado ? '⭐' : ''}${x.picante ? '🌶️' : ''}${x.vegano ? '🌱' : x.veg ? '🌿' : ''}</span>
+          <span class="marcas">${x.destacado ? '⭐' : ''}${x.picante ? '🌶️' : ''}${x.vegano ? '🌱' : x.veg ? '🌿' : ''}${x.foto_ia ? '🤖' : ''}</span>
           <span class="acciones">
+            <label class="camara" title="${L('Hacer foto con el móvil', 'Foto mit dem Handy machen')}"><input type="file" accept="image/*" capture="environment" data-camara="${x.id}" hidden>📷</label>
             <button type="button" data-visible="${x.id}" title="${L('Mostrar/ocultar', 'Ein-/ausblenden')}">${x.visible ? '👁️' : '🚫'}</button>
             <button type="button" data-editar-plato="${x.id}" title="${L('Editar', 'Bearbeiten')}">✏️</button>
             <button type="button" data-borrar-plato="${x.id}" title="${L('Borrar', 'Löschen')}">🗑️</button>
@@ -198,7 +199,7 @@
       <div class="dos">${campo('sub_es', 'Subsección 🇲🇽 (opcional)', 'Unterabschnitt 🇲🇽 (optional)')}${campo('sub_de', 'Subsección 🇩🇪', 'Unterabschnitt 🇩🇪')}</div>
       <div class="dos">${campo('opciones_es', 'Opciones 🇲🇽 (p. ej. sabores)', 'Optionen 🇲🇽 (z. B. Sorten)')}${campo('opciones_de', 'Opciones 🇩🇪', 'Optionen 🇩🇪')}</div>
       <fieldset class="marcas-form">
-        ${[['veg', '🌿 Vegetariano', '🌿 Vegetarisch'], ['vegano', '🌱 Vegano', '🌱 Vegan'], ['destacado', '⭐ Favorito (sale en portada)', '⭐ Favorit (auf der Startseite)'], ['visible', '👁️ Visible en la carta', '👁️ Auf der Karte sichtbar']]
+        ${[['veg', '🌿 Vegetariano', '🌿 Vegetarisch'], ['vegano', '🌱 Vegano', '🌱 Vegan'], ['destacado', '⭐ Favorito (sale en portada)', '⭐ Favorit (auf der Startseite)'], ['visible', '👁️ Visible en la carta', '👁️ Auf der Karte sichtbar'], ['foto_ia', '🤖 Foto ilustrativa (IA)', '🤖 Symbolbild (KI)']]
           .map(([n, es, de]) => `<label class="check"><input type="checkbox" name="${n}" ${v[n] ? 'checked' : ''}> ${L(es, de)}</label>`).join('')}
       </fieldset>
       <fieldset><legend>${L('Variantes con precio propio (opcional)', 'Varianten mit eigenem Preis (optional)')}</legend>
@@ -238,10 +239,10 @@
           precio: variantes.length ? Math.min(...variantes.map((x) => x.precio)) : Number(d.precio) || 0,
           sub_es: d.sub_es.trim() || null, sub_de: d.sub_de.trim() || null,
           opciones_es: d.opciones_es.trim() || null, opciones_de: d.opciones_de.trim() || null,
-          picante: Number(d.picante) || 0, veg: !!d.veg, vegano: !!d.vegano, destacado: !!d.destacado, visible: !!d.visible, variantes,
+          picante: Number(d.picante) || 0, veg: !!d.veg, vegano: !!d.vegano, destacado: !!d.destacado, visible: !!d.visible, variantes, foto_ia: !!d.foto_ia,
         };
         const archivo = f.archivo.files[0];
-        if (archivo) { if (v.foto) await borrarArchivo(v.foto); fila.foto = (await subir(archivo, 'platos', { max: 900 })).url; }
+        if (archivo) { if (v.foto) await borrarArchivo(v.foto); fila.foto = (await subir(archivo, 'platos', { max: 900, cuadrado: true })).url; fila.foto_ia = false; }
         else if (d.quitar_foto) { await borrarArchivo(v.foto); fila.foto = null; }
         if (pl) comprobar(await sb.from('platos').update(fila).eq('id', pl.id));
         else {
@@ -342,6 +343,22 @@
       } else if (b.dataset.moverPlato) {
         await moverFila('platos', estado.platos.filter((x) => x.cat === estado.catActiva), b.dataset.moverPlato, Number(b.dataset.dir));
       }
+    } catch (err) { fallo(err); }
+  });
+
+  // Foto rápida de un plato con la cámara del móvil (sustituye a la foto ilustrativa)
+  raiz.addEventListener('change', async (e) => {
+    if (pestana !== 'carta' || !e.target.matches('[data-camara]')) return;
+    const pl = estado.platos.find((x) => String(x.id) === e.target.dataset.camara);
+    const archivo = e.target.files[0];
+    if (!pl || !archivo) return;
+    try {
+      aviso(`⏳ ${L('Subiendo foto…', 'Foto wird hochgeladen…')}`);
+      const { url } = await subir(archivo, 'platos', { max: 900, cuadrado: true });
+      comprobar(await sb.from('platos').update({ foto: url, foto_ia: false }).eq('id', pl.id));
+      await borrarArchivo(pl.foto);
+      aviso(`✅ ${L('¡Foto cambiada! Ya sale en la carta.', 'Foto geändert! Schon auf der Karte.')}`);
+      await recargar();
     } catch (err) { fallo(err); }
   });
 

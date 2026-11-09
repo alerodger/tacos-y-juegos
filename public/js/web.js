@@ -136,14 +136,20 @@
           : p.veg ? `<span class="etiqueta veg">🌿 ${CE.t('carta.veg')}</span>` : '',
         p.destacado ? `<span class="etiqueta">⭐ ${CE.t('carta.favorito')}</span>` : '',
       ].join('');
-      return `${cabecera}<article class="plato${p.foto ? ' con-foto' : ''}${p.destacado ? ' destacado' : ''}">
-        ${p.foto ? `<img src="${esc(p.foto)}" alt="" loading="lazy">` : ''}
-        <h3>${esc(CE.tx(p, 'nombre'))}</h3>
-        <span class="precio">${precioPlato(p)}</span>
-        ${CE.tx(p, 'desc') ? `<p>${esc(CE.tx(p, 'desc'))}</p>` : ''}
-        ${opciones ? `<p class="opciones">${esc(opciones)}</p>` : ''}
-        ${p.variantes?.length ? `<ul class="variantes">${p.variantes.map((v) => `<li><span>${esc(CE.L(v))}</span><span>${CE.precio(v.precio)}</span></li>`).join('')}</ul>` : ''}
-        ${etiquetas ? `<div class="etiquetas">${etiquetas}</div>` : ''}
+      const foto = p.foto
+        ? `<button type="button" class="plato-foto" data-ampliar="${datos.platos.indexOf(p)}" aria-label="${esc(CE.L({ es: 'Ampliar foto', de: 'Foto vergrößern' }))}: ${esc(CE.tx(p, 'nombre'))}">
+            <img src="${esc(p.foto)}" alt="" loading="lazy">${p.foto_ia ? `<span class="foto-ia">${CE.t('carta.fotoIa')}</span>` : ''}<span class="lupa" aria-hidden="true">⤢</span></button>`
+        : '';
+      return `${cabecera}<article class="plato${p.destacado ? ' destacado' : ''}">
+        ${foto}
+        <div class="plato-cuerpo">
+          <h3>${esc(CE.tx(p, 'nombre'))}</h3>
+          <span class="precio">${precioPlato(p)}</span>
+          ${CE.tx(p, 'desc') ? `<p>${esc(CE.tx(p, 'desc'))}</p>` : ''}
+          ${opciones ? `<p class="opciones">${esc(opciones)}</p>` : ''}
+          ${p.variantes?.length ? `<ul class="variantes">${p.variantes.map((v) => `<li><span>${esc(CE.L(v))}</span><span>${CE.precio(v.precio)}</span></li>`).join('')}</ul>` : ''}
+          ${etiquetas ? `<div class="etiquetas">${etiquetas}</div>` : ''}
+        </div>
       </article>`;
     }).join('');
   }
@@ -163,6 +169,22 @@
     $$('[data-apertura]').forEach((el) => { el.hidden = !estado; el.textContent = estado; });
   }
   setInterval(pintarHorario, 60000);
+
+  // Visor de fotos de la carta (se abre al tocar una foto)
+  const visor = document.createElement('dialog');
+  visor.className = 'visor';
+  document.body.appendChild(visor);
+  visor.addEventListener('click', (e) => { if (e.target === visor || e.target.closest('[data-cerrar]')) visor.close(); });
+  $('[data-carta]').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ampliar]');
+    if (!b) return;
+    const p = datos.platos[Number(b.dataset.ampliar)];
+    visor.innerHTML = `<figure><img src="${esc(p.foto)}" alt="${esc(CE.tx(p, 'nombre'))}">
+      ${p.foto_ia ? `<span class="foto-ia">${CE.t('carta.fotoIa')}</span>` : ''}
+      <figcaption><b>${esc(CE.tx(p, 'nombre'))}</b><span class="precio">${precioPlato(p)}</span>${CE.tx(p, 'desc') ? `<p>${esc(CE.tx(p, 'desc'))}</p>` : ''}</figcaption></figure>
+      <button type="button" class="visor-cerrar" data-cerrar aria-label="${esc(CE.L({ es: 'Cerrar', de: 'Schließen' }))}">✕</button>`;
+    visor.showModal();
+  });
 
   $('[data-pestanas]').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-cat]');
