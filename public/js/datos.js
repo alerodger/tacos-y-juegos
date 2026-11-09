@@ -24,14 +24,15 @@ CE.api = {
 CE.cargarDatos = async () => {
   if (!CE.api.activo) return { ...CE.demo, premios: [], demo: true };
   try {
-    const [ajustes, categorias, platos, fotos, premios] = await Promise.all([
+    const [ajustes, categorias, platos, fotos, premios, opiniones] = await Promise.all([
       CE.api.get('ajustes?select=*&id=eq.1'),
       CE.api.get('categorias?select=*&order=orden'),
       CE.api.get('platos?select=*&visible=eq.true&order=orden'),
       CE.api.get('fotos?select=*&order=orden'),
       CE.api.get('premios?select=*&activo=eq.true&order=orden'),
+      CE.api.get('opiniones?select=*&visible=eq.true&order=orden'),
     ]);
-    return { ajustes: { ...CE.demo.ajustes, ...(ajustes[0] || {}) }, categorias, platos, fotos, premios, demo: false };
+    return { ajustes: { ...CE.demo.ajustes, ...(ajustes[0] || {}) }, categorias, platos, fotos, premios, opiniones, demo: false };
   } catch (e) {
     console.warn('Supabase no disponible, uso datos de ejemplo', e);
     return { ...CE.demo, premios: [], demo: true };
@@ -109,4 +110,22 @@ CE.horario = {
       : `${CE.t('horario.el')} ${CE.idioma === 'es' ? dia.toLowerCase() : dia}`;
     return `🔴 ${CE.t('horario.cerradoAhora')} · ${CE.t('horario.abre')} ${cuando} ${CE.t('horario.a')} ${e.hora}`;
   },
+};
+
+// Botones fijos en pantalla: carta, juegos e Instagram (barra abajo en móvil, columna en escritorio)
+CE.botonesFijos = ({ carta, juegos, instagram }) => {
+  if (document.querySelector('.fijos')) return;
+  const nav = document.createElement('nav');
+  nav.className = 'fijos';
+  const pintar = () => {
+    nav.setAttribute('aria-label', CE.L({ es: 'Accesos rápidos', de: 'Schnellzugriff' }));
+    nav.innerHTML = `
+      <a href="${carta}"><span aria-hidden="true">🌮</span><b>${CE.t('nav.carta')}</b></a>
+      <a href="${juegos}" class="juegos"><span aria-hidden="true">🎲</span><b>${CE.t('nav.juegos')}</b></a>
+      ${instagram ? `<a href="https://www.instagram.com/${CE.esc(instagram)}/" target="_blank" rel="noopener"><span aria-hidden="true">📷</span><b>Instagram</b></a>` : ''}`;
+  };
+  pintar();
+  document.addEventListener('idioma', pintar);
+  document.body.appendChild(nav);
+  document.body.classList.add('con-fijos');
 };

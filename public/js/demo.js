@@ -268,8 +268,12 @@ window.CE = window.CE || {};
       email: '',
       instagram: 'cantinaensenada_passau',
       reserva_url: 'https://www.thefork.de/restaurant/cantina-ensenada-r850664',
-      maps_url: 'https://www.google.com/maps/search/?api=1&query=Cantina+Ensenada+L%C3%B6wengrube+4+94032+Passau',
-      valoracion: '9,0', valoracion_opiniones: 197, valoracion_fuente: 'TheFork',
+      maps_url: 'https://www.google.com/maps/search/?api=1&query=Cantina%20Ensenada%2C%20L%C3%B6wengrube%204%2C%2094032%20Passau&query_place_id=ChIJW577GqtYdEcRtKUyvOm_6pk',
+      // Notas en otras webs (solo datos reales; nota vacía = se muestra sin cifra)
+      valoraciones: [
+        { fuente: 'TheFork', nota: '9,0', escala: '10', opiniones: '197', url: 'https://www.thefork.de/restaurant/cantina-ensenada-r850664' },
+        { fuente: 'Google', nota: null, escala: '5', opiniones: '500+', url: 'https://www.google.com/maps/search/?api=1&query=Cantina%20Ensenada%2C%20L%C3%B6wengrube%204%2C%2094032%20Passau&query_place_id=ChIJW577GqtYdEcRtKUyvOm_6pk' },
+      ],
       // Horario por día de la semana (0 = domingo … 6 = sábado): [abre, cierra] o null si cierra.
       // "24:00" = medianoche; si cierra después de medianoche, p. ej. "01:00", también vale.
       horario: [['17:00', '23:00'], null, ['17:00', '24:00'], ['17:00', '24:00'], ['17:00', '24:00'], ['17:00', '24:00'], ['17:00', '24:00']],
@@ -297,6 +301,24 @@ window.CE = window.CE || {};
       { id: 'refrescos', grupo: 'bebida', icono: '☕', nombre_es: 'Refrescos y café', nombre_de: 'Softdrinks & Kaffee', lista: true },
     ],
     platos,
+    // Hall of Fame: extractos literales de reseñas reales de Google (octubre 2026, vía reviewhero.io).
+    // Nombre de pila + inicial. El restaurante puede cambiarlas desde el panel.
+    opiniones: [
+      { autor: 'Thomas S.', fuente: 'Google', fecha: '2026-10-07', idioma: 'de', foto: 'assets/fotos/barra-catrina.webp',
+        texto_de: 'Die Burritos waren die besten, welche wir seit 25 Jahren außerhalb Mexikos gegessen haben!!!',
+        texto_es: 'Los burritos eran los mejores que hemos comido fuera de México en 25 años.' },
+      { autor: 'Aravind', fuente: 'Google', fecha: '2026-10-07', idioma: 'en', foto: 'assets/fotos/comedor-sombreros.webp',
+        texto_es: 'Buena comida, buena gente, buen rollo.', texto_de: 'Gutes Essen, gute Leute, gute Stimmung.', texto_original: 'good food, good people, good vibes' },
+      { autor: 'Sreeja M.', fuente: 'Google', fecha: '2026-09-22', idioma: 'en', foto: 'assets/fotos/tacos-baja.webp',
+        texto_es: 'Los tacos y las hamburguesas estaban deliciosos, y los cócteles también muy buenos.', texto_de: 'Die Tacos und Burger waren köstlich und die Cocktails auch richtig gut.',
+        texto_original: 'The tacos and burgers were delicious, and the cocktails were really good too.' },
+      { autor: 'Nithya P.', fuente: 'Google', fecha: '2026-09-23', idioma: 'de', foto: 'assets/fotos/comedor-velas.webp',
+        texto_de: 'Wirklich tolles Essen und ein ausgezeichneter Service!', texto_es: '¡Comida realmente buenísima y un servicio excelente!' },
+      { autor: 'Cheryl B.', fuente: 'Google', fecha: '2026-09-26', idioma: 'en', foto: 'assets/fotos/steak.webp',
+        texto_es: 'La comida, una delicia, y las bebidas muy buenas.', texto_de: 'Das Essen war herrlich und die Drinks sehr gut.', texto_original: 'Food was delightful and drinks very good.' },
+      { autor: 'Florent H.', fuente: 'Google', fecha: '2026-09-22', idioma: 'de', foto: 'assets/fotos/tacos-baja.webp',
+        texto_de: 'Alles war sehr gut und das Essen war perfekt.', texto_es: 'Todo estaba muy bueno y la comida, perfecta.' },
+    ],
     fotos: [
       { url: 'assets/fotos/barra-catrina.webp', texto_es: 'La barra y nuestra catrina', texto_de: 'Die Bar und unsere Catrina', ancho: 2 },
       { url: 'assets/fotos/tacos-baja.webp', texto_es: 'Tacos de pescado estilo Baja', texto_de: 'Baja-Style Fish Tacos' },

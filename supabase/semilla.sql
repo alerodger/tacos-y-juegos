@@ -2,9 +2,9 @@
 -- Ejecutar DESPUÉS de esquema.sql. Borra y vuelve a cargar la carta, la galería y los ajustes.
 begin;
 
-insert into ajustes (id, nombre, eslogan_es, eslogan_de, direccion, cp_ciudad, telefono, email, instagram, reserva_url, maps_url, valoracion, valoracion_opiniones, valoracion_fuente, horario, cara_jefe, promo_ruleta_es, promo_ruleta_de) values
-(1, 'Cantina Ensenada', 'Cocina mexicana & tequila bar', 'Cocina Mexicana & Tequila Bar', 'Löwengrube 4', '94032 Passau', '+49 176 62011209', '', 'cantinaensenada_passau', 'https://www.thefork.de/restaurant/cantina-ensenada-r850664', 'https://www.google.com/maps/search/?api=1&query=Cantina+Ensenada+L%C3%B6wengrube+4+94032+Passau', '9,0', 197, 'TheFork', '[["17:00","23:00"],null,["17:00","24:00"],["17:00","24:00"],["17:00","24:00"],["17:00","24:00"],["17:00","24:00"]]'::jsonb, null, null, null)
-on conflict (id) do update set nombre = excluded.nombre, eslogan_es = excluded.eslogan_es, eslogan_de = excluded.eslogan_de, direccion = excluded.direccion, cp_ciudad = excluded.cp_ciudad, telefono = excluded.telefono, email = excluded.email, instagram = excluded.instagram, reserva_url = excluded.reserva_url, maps_url = excluded.maps_url, valoracion = excluded.valoracion, valoracion_opiniones = excluded.valoracion_opiniones, valoracion_fuente = excluded.valoracion_fuente, horario = excluded.horario, cara_jefe = excluded.cara_jefe, promo_ruleta_es = excluded.promo_ruleta_es, promo_ruleta_de = excluded.promo_ruleta_de;
+insert into ajustes (id, nombre, eslogan_es, eslogan_de, direccion, cp_ciudad, telefono, email, instagram, reserva_url, maps_url, valoracion, valoracion_opiniones, valoracion_fuente, horario, cara_jefe, promo_ruleta_es, promo_ruleta_de, valoraciones) values
+(1, 'Cantina Ensenada', 'Cocina mexicana & tequila bar', 'Cocina Mexicana & Tequila Bar', 'Löwengrube 4', '94032 Passau', '+49 176 62011209', '', 'cantinaensenada_passau', 'https://www.thefork.de/restaurant/cantina-ensenada-r850664', 'https://www.google.com/maps/search/?api=1&query=Cantina%20Ensenada%2C%20L%C3%B6wengrube%204%2C%2094032%20Passau&query_place_id=ChIJW577GqtYdEcRtKUyvOm_6pk', null, null, null, '[["17:00","23:00"],null,["17:00","24:00"],["17:00","24:00"],["17:00","24:00"],["17:00","24:00"],["17:00","24:00"]]'::jsonb, null, null, null, '[{"fuente":"TheFork","nota":"9,0","escala":"10","opiniones":"197","url":"https://www.thefork.de/restaurant/cantina-ensenada-r850664"},{"fuente":"Google","nota":null,"escala":"5","opiniones":"500+","url":"https://www.google.com/maps/search/?api=1&query=Cantina%20Ensenada%2C%20L%C3%B6wengrube%204%2C%2094032%20Passau&query_place_id=ChIJW577GqtYdEcRtKUyvOm_6pk"}]'::jsonb)
+on conflict (id) do update set nombre = excluded.nombre, eslogan_es = excluded.eslogan_es, eslogan_de = excluded.eslogan_de, direccion = excluded.direccion, cp_ciudad = excluded.cp_ciudad, telefono = excluded.telefono, email = excluded.email, instagram = excluded.instagram, reserva_url = excluded.reserva_url, maps_url = excluded.maps_url, valoracion = excluded.valoracion, valoracion_opiniones = excluded.valoracion_opiniones, valoracion_fuente = excluded.valoracion_fuente, horario = excluded.horario, cara_jefe = excluded.cara_jefe, promo_ruleta_es = excluded.promo_ruleta_es, promo_ruleta_de = excluded.promo_ruleta_de, valoraciones = excluded.valoraciones;
 
 delete from platos;
 delete from categorias;
@@ -206,9 +206,18 @@ insert into fotos (url, texto_es, texto_de, ancho, orden) values
 ('assets/fotos/steak.webp', 'Para los de buen comer', 'Für den großen Hunger', 1, 3),
 ('assets/fotos/comedor-velas.webp', 'Cenas a la luz de las velas', 'Abendessen bei Kerzenlicht', 1, 4);
 
+delete from opiniones;
+insert into opiniones (autor, fuente, fecha, idioma, texto_es, texto_de, texto_original, foto, url, orden) values
+('Thomas S.', 'Google', '2026-10-07', 'de', 'Los burritos eran los mejores que hemos comido fuera de México en 25 años.', 'Die Burritos waren die besten, welche wir seit 25 Jahren außerhalb Mexikos gegessen haben!!!', null, 'assets/fotos/barra-catrina.webp', null, 0),
+('Aravind', 'Google', '2026-10-07', 'en', 'Buena comida, buena gente, buen rollo.', 'Gutes Essen, gute Leute, gute Stimmung.', 'good food, good people, good vibes', 'assets/fotos/comedor-sombreros.webp', null, 1),
+('Sreeja M.', 'Google', '2026-09-22', 'en', 'Los tacos y las hamburguesas estaban deliciosos, y los cócteles también muy buenos.', 'Die Tacos und Burger waren köstlich und die Cocktails auch richtig gut.', 'The tacos and burgers were delicious, and the cocktails were really good too.', 'assets/fotos/tacos-baja.webp', null, 2),
+('Nithya P.', 'Google', '2026-09-23', 'de', '¡Comida realmente buenísima y un servicio excelente!', 'Wirklich tolles Essen und ein ausgezeichneter Service!', null, 'assets/fotos/comedor-velas.webp', null, 3),
+('Cheryl B.', 'Google', '2026-09-26', 'en', 'La comida, una delicia, y las bebidas muy buenas.', 'Das Essen war herrlich und die Drinks sehr gut.', 'Food was delightful and drinks very good.', 'assets/fotos/steak.webp', null, 4),
+('Florent H.', 'Google', '2026-09-22', 'de', 'Todo estaba muy bueno y la comida, perfecta.', 'Alles war sehr gut und das Essen war perfekt.', null, 'assets/fotos/tacos-baja.webp', null, 5);
+
 insert into premios (periodo, texto_es, texto_de, orden)
 select * from (values
-  ('semana', 'Un chupito de tequila para el número 1 de cada juego', 'Ein Tequila-Shot für die Nummer 1 jedes Spiels', 1),
+  ('semana', 'Un chupito de tequila para el número 1 de la semana', 'Ein Tequila-Shot für die Nummer 1 der Woche', 1),
   ('mes', 'Una ronda de margaritas para tu mesa', 'Eine Runde Margaritas für deinen Tisch', 2)
 ) as v(periodo, texto_es, texto_de, orden)
 where not exists (select 1 from premios);

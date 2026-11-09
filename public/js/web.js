@@ -53,12 +53,46 @@
   function pintarFijos() {
     const eslogan = CE.tx(a, 'eslogan') || '';
     $('[data-eslogan]').innerHTML = esc(eslogan).replace('&amp;', '<b>&amp;</b>');
-    const v = $('[data-valoracion]');
-    v.hidden = !a.valoracion;
-    if (a.valoracion) {
-      v.href = a.reserva_url || '#';
-      v.innerHTML = `<b>${esc(a.valoracion)}</b> ★ ${esc(a.valoracion_fuente || '')} · ${esc(a.valoracion_opiniones || '')} ${CE.t('valoracion.opiniones')}`;
-    }
+    // Notas en otras webs (pequeñas, debajo del aviso de abierto/cerrado)
+    const MARCAS = { thefork: ['#00665c', '🍴'], google: ['#4285f4', 'G'], tripadvisor: ['#34e0a1', '🦉'], lieferando: ['#ff8000', '🛵'] };
+    const valoraciones = (a.valoraciones?.length ? a.valoraciones
+      : a.valoracion ? [{ fuente: a.valoracion_fuente, nota: a.valoracion, opiniones: a.valoracion_opiniones, url: a.reserva_url }] : [])
+      .filter((v) => v.fuente && (v.nota || v.opiniones));
+    $('[data-pruebas]').innerHTML = valoraciones.map((v) => {
+      const [color, ico] = MARCAS[String(v.fuente).toLowerCase()] || ['#888', '★'];
+      return `<a class="prueba" href="${esc(v.url || '#')}" target="_blank" rel="noopener" style="--m:${color}">
+        <i aria-hidden="true">${ico}</i><span>${esc(v.fuente)}</span>
+        ${v.nota ? `<b>${esc(v.nota)}${v.escala ? `<small>/${esc(v.escala)}</small>` : ''}</b>` : '<b>★★★★★</b>'}
+        ${v.opiniones ? `<em>${esc(v.opiniones)} ${CE.t('valoracion.opiniones')}</em>` : ''}</a>`;
+    }).join('');
+  }
+
+  // Hall of Fame: mini feed tipo Instagram con reseñas reales y fotos del local
+  function pintarHall() {
+    const ops = datos.opiniones || [];
+    $('#hall').hidden = !ops.length;
+    const nombreIdioma = { es: CE.L({ es: 'español', de: 'Spanisch' }), de: CE.L({ es: 'alemán', de: 'Deutsch' }), en: CE.L({ es: 'inglés', de: 'Englisch' }) };
+    const fotos = datos.fotos.map((f) => f.url);
+    $('[data-hall]').innerHTML = ops.map((o, i) => {
+      const foto = o.foto || fotos[i % Math.max(1, fotos.length)];
+      // En el idioma de la web; si la reseña se escribió en otro, se enseña también el original
+      const original = o.idioma === CE.idioma ? null : (o.texto_original || o[`texto_${o.idioma}`]);
+      const texto = o[`texto_${CE.idioma}`] || o.texto_original;
+      const fecha = o.fecha ? new Date(o.fecha).toLocaleDateString(CE.idioma === 'de' ? 'de-DE' : 'es-ES', { month: 'short', year: 'numeric' }) : '';
+      const iniciales = o.autor.split(/\s+/).map((x) => x[0]).join('').slice(0, 2).toUpperCase();
+      return `<article class="post aparece visible">
+        <header><span class="post-avatar" style="--h:${(i * 67) % 360}">${esc(iniciales)}</span>
+          <span><b>${esc(o.autor)}</b><small>${esc(o.fuente)}${fecha ? ` · ${esc(fecha)}` : ''}</small></span><span class="post-fuente">${esc(o.fuente)}</span></header>
+        ${foto ? `<div class="post-foto"><img src="${esc(foto)}" alt="" loading="lazy"></div>` : ''}
+        <div class="post-cuerpo">
+          <p class="post-iconos" aria-hidden="true">♥ 💬 ➤</p>
+          <blockquote>“${esc(texto)}”</blockquote>
+          ${original && original !== texto ? `<p class="post-original">${CE.L({ es: 'Traducido del', de: 'Übersetzt aus dem' })} ${nombreIdioma[o.idioma] || o.idioma} · <span lang="${esc(o.idioma)}">“${esc(original)}”</span></p>` : ''}
+        </div>
+      </article>`;
+    }).join('');
+    $('[data-hall-nota]').innerHTML = `${CE.L({ es: 'Reseñas reales publicadas en Google, elegidas por el restaurante.', de: 'Echte, auf Google veröffentlichte Bewertungen, ausgewählt vom Restaurant.' })}
+      <a href="${esc(a.maps_url)}" target="_blank" rel="noopener">${CE.L({ es: 'Ver todas', de: 'Alle ansehen' })} →</a>`;
   }
 
   function pintarDestacados() {
@@ -144,7 +178,13 @@
     if (l && cats.some((c) => c.id === l.dataset.irCarta)) { catActiva = l.dataset.irCarta; pintarCarta(); }
   });
 
-  function pintarTodo() { pintarFijos(); pintarDestacados(); pintarCarta(); pintarGaleria(); pintarHorario(); }
+  function pintarTodo() { pintarFijos(); pintarDestacados(); pintarCarta(); pintarGaleria(); pintarHall(); pintarHorario(); }
+
+  // Top 3 en la tele, pareja bailando y botones fijos
+  CE.ajustes = a;
+  CE.tele($('[data-tele]'), { enlace: 'juegos/?ranking' });
+  CE.baile($('[data-baile]'));
+  CE.botonesFijos({ carta: '#carta', juegos: 'juegos/', instagram: a.instagram });
   document.addEventListener('idioma', pintarTodo);
   CE.aplicarIdioma(); // aplica textos y dispara pintarTodo
 

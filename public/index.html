@@ -13,6 +13,7 @@
   <link rel="preload" href="assets/fotos/barra-catrina.webp" as="image">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/web.css">
+  <link rel="stylesheet" href="css/tele.css">
 </head>
 <body>
   <header class="cabecera">
@@ -49,11 +50,11 @@
         <div class="hero-botones">
           <a class="boton" href="#" target="_blank" rel="noopener" data-reserva>📅 <span data-i18n="hero.reservar"></span></a>
           <a class="boton amarillo" href="#carta">🌮 <span data-i18n="hero.verCarta"></span></a>
-          <a class="boton neon" href="juegos/">🎲 <span data-i18n="hero.jugar"></span></a>
+          <a class="boton neon tiembla" href="juegos/">🎲 <span data-i18n="hero.jugar"></span></a>
         </div>
         <div class="hero-datos">
-          <a class="valoracion" href="#" target="_blank" rel="noopener" data-valoracion hidden></a>
           <a class="apertura" href="#visitanos" data-apertura hidden></a>
+          <div class="pruebas" data-pruebas></div>
         </div>
       </div>
     </section>
@@ -71,6 +72,7 @@
     <section class="banda-juegos" id="juegos">
       <div class="envoltura">
         <div class="banda-caja aparece">
+          <div class="banda-tele" data-tele></div>
           <span class="antetitulo" data-i18n="banda.ante"></span>
           <h2 class="neon" data-i18n="banda.titulo"></h2>
           <p data-i18n="banda.texto"></p>
@@ -105,7 +107,8 @@
 
     <section class="tequila" id="tequila">
       <div class="tequila-foto"><img src="assets/fotos/comedor-sombreros.webp" alt="" loading="lazy"></div>
-      <div class="envoltura">
+      <div class="envoltura tequila-fila">
+        <div class="baile" aria-hidden="true"><canvas data-baile></canvas><span class="baile-suelo"></span></div>
         <div class="tequila-texto aparece">
           <span class="antetitulo" data-i18n="bar.ante"></span>
           <h2><span class="neon" data-i18n="bar.titulo1"></span><br><span class="rojo" data-i18n="bar.titulo2"></span></h2>
@@ -129,6 +132,18 @@
         </div>
         <div class="galeria-rejilla" data-galeria></div>
         <div class="galeria-ig"><a class="boton claro" href="#" target="_blank" rel="noopener" data-instagram>📷 <span data-instagram-usuario></span></a></div>
+      </div>
+    </section>
+
+    <section class="seccion hall" id="hall">
+      <div class="envoltura">
+        <div class="seccion-cabeza aparece">
+          <span class="antetitulo" data-i18n="hall.ante"></span>
+          <h2><span data-i18n="hall.titulo"></span> <span aria-hidden="true">⭐</span></h2>
+          <p data-i18n="hall.sub"></p>
+        </div>
+        <div class="feed" data-hall></div>
+        <p class="hall-nota" data-hall-nota></p>
       </div>
     </section>
 
@@ -177,6 +192,9 @@
   <script src="js/i18n.js"></script>
   <script src="js/demo.js"></script>
   <script src="js/datos.js"></script>
+  <script src="js/ranking.js"></script>
+  <script src="js/tele.js"></script>
+  <script src="js/baile.js"></script>
   <script src="js/web.js"></script>
 </body>
 </html>

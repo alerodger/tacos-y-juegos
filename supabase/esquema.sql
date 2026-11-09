@@ -105,6 +105,29 @@ create policy "fotos: lectura pública" on fotos for select using (true);
 drop policy if exists "fotos: admin escribe" on fotos;
 create policy "fotos: admin escribe" on fotos for all using (es_admin()) with check (es_admin());
 
+-- ---------- Notas en otras webs y Hall of Fame ----------
+-- valoraciones: [{fuente, nota, escala, opiniones, url}] (TheFork, Google, Tripadvisor, Lieferando…)
+alter table ajustes add column if not exists valoraciones jsonb not null default '[]';
+
+-- Reseñas reales elegidas por el restaurante (extractos literales, nombre de pila + inicial)
+create table if not exists opiniones (
+  id bigint generated always as identity primary key,
+  autor text not null,
+  fuente text not null default 'Google',
+  fecha date,
+  idioma text not null default 'de',            -- idioma original de la reseña
+  texto_es text, texto_de text, texto_original text,
+  foto text,
+  url text,
+  visible boolean not null default true,
+  orden int not null default 0
+);
+alter table opiniones enable row level security;
+drop policy if exists "opiniones: lectura pública de las visibles" on opiniones;
+create policy "opiniones: lectura pública de las visibles" on opiniones for select using (visible or es_admin());
+drop policy if exists "opiniones: admin escribe" on opiniones;
+create policy "opiniones: admin escribe" on opiniones for all using (es_admin()) with check (es_admin());
+
 -- ---------- Premios de los rankings ----------
 create table if not exists premios (
   id bigint generated always as identity primary key,

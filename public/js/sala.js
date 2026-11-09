@@ -12,6 +12,8 @@
   document.querySelectorAll('.logo img').forEach((img) => { img.alt = datos.ajustes.nombre; });
 
   const params = new URLSearchParams(location.search);
+  // Botones fijos (carta, juegos, Instagram) en el salón y el ranking; dentro de un juego no, para no tapar
+  if (!params.get('j')) CE.botonesFijos({ carta: '../#carta', juegos: './', instagram: datos.ajustes.instagram });
 
   // ---------- Ranking completo ----------
   if (params.has('ranking')) {

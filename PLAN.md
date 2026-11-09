@@ -45,7 +45,7 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 - [x] **B. Salón de juegos**: jugadores y casilla de juegos de beber antes de elegir (los juegos
       que no encajan bajan y se ponen grises), tarjetas con vista previa tipo CrazyGames, nombres
       más atractivos, top 3 en una tele antigua con interferencias, juego del Impostor
-- [ ] **C. Portada**: botones fijos (carta, juegos, Instagram), botón de jugar que tiembla, notas de
+- [x] **C. Portada**: botones fijos (carta, juegos, Instagram), botón de jugar que tiembla, notas de
       Google / Lieferando / TripAdvisor / TheFork, top 3 en la tele, Hall of Fame (reseñas reales +
       fotos), pixel art de una pareja bailando en el tequila bar
 - [ ] **D. Carta con fotos**: foto de cada plato y cóctel (IA, marcada como "Symbolbild"),
@@ -58,5 +58,7 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
 - Confirmar la carta y las traducciones al español; Mole negro (dip) puesto a 4,00 € leyendo una
   foto borrosa (TheFork decía 40 €)
 - Permiso de uso de las fotos (ahora hay 5 sacadas de internet/Instagram)
+- Nota exacta de Google (ReviewHero da 4,44 con 601 opiniones, pero mezcla Google y Facebook) y
+  si están en Tripadvisor / Lieferando (no se ha encontrado ficha)
 - Foto de la cara del dueño (con su consentimiento por escrito)
 - Datos para el Impressum (titular, contacto, USt-IdNr.)
