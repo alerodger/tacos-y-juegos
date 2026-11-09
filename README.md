@@ -72,13 +72,24 @@ public/js/datos.js         Carga de datos y API REST de Supabase
 public/js/web.js           Portada
 public/js/sala.js          Sala de juegos
 public/js/motor.js         Cara del jefe, récords y pantalla de fin de partida
-public/js/ranking.js       Rankings y formulario de puntuación
+public/js/ranking.js       Ranking general (Supabase o modo demo) y formulario de puntuación
+public/js/tele.js          Tele antigua con el top 3
 public/js/admin.js         Panel de administración
 public/js/juegos/*.js      Un archivo por juego
 public/vendor/supabase.js  supabase-js 2.45.4 (alojado aquí, sin CDN)
 public/vendor/qrcode.js    qrcode-generator 1.4.4 (MIT)
 supabase/esquema.sql       Tablas, permisos, funciones y almacenamiento
 supabase/semilla.sql       GENERADO con `node scripts/generar-semilla.mjs`
+```
+
+## Portadas de los juegos
+
+Las imágenes de `public/assets/juegos/` se generan jugando unos segundos a cada juego y montando la
+captura en un móvil. Si se cambia un juego, se regeneran así (con el servidor local en marcha):
+
+```
+npm install          # solo la primera vez (herramientas de desarrollo)
+npm run portadas     # o: node scripts/portadas.mjs http://localhost:8766/ impostor ruleta
 ```
 
 ## Probar en local

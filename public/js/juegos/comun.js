@@ -47,6 +47,12 @@ CE.pieBeber = () => `<p class="pie-beber">🥤 ${CE.t('beber.resp')} · <a href=
 
 CE.azar = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+// Interruptor "juegos para brindar" del salón (requiere haber confirmado +18)
+CE.beber = {
+  activo() { try { return localStorage.getItem('ce-beber') === 'si' && localStorage.getItem('ce-18') === 'si'; } catch (e) { return false; } },
+  poner(v) { try { localStorage.setItem('ce-beber', v ? 'si' : 'no'); if (v) localStorage.setItem('ce-18', 'si'); } catch (e) { /* nada */ } },
+};
+
 // Gestiona un juego que primero pide jugadores y luego arranca.
 // crear(escenario, jugadores, volverAJugadores) → { idioma?, destruir? }
 CE.conJugadores = (escenario, minimo, crear) => {
@@ -55,6 +61,9 @@ CE.conJugadores = (escenario, minimo, crear) => {
     actual?.destruir?.();
     actual = CE.pedirJugadores(escenario, { minimo, alListo: (lista) => { actual = crear(escenario, lista, pedir); } });
   };
-  pedir();
+  // Si ya se apuntaron en el salón, se empieza directamente
+  const lista = CE.jugadores.lista();
+  if (lista.length >= minimo) actual = crear(escenario, lista, pedir);
+  else pedir();
   return { idioma: () => actual?.idioma?.(), destruir: () => actual?.destruir?.() };
 };

@@ -1,0 +1,54 @@
+/* ---------- Tele antigua del top 3 ---------- */
+.tele { display: grid; justify-items: center; width: min(100%, 360px); text-decoration: none; color: inherit; margin: 0 auto; position: relative; }
+.tele-antena { position: relative; height: 46px; width: 120px; display: block; }
+.tele-antena i { position: absolute; bottom: 0; left: 50%; width: 3px; height: 54px; background: linear-gradient(#c9c9c9, #6b6b6b); border-radius: 3px; transform-origin: bottom center; }
+.tele-antena i:first-child { transform: rotate(-32deg); }
+.tele-antena i:last-child { transform: rotate(28deg); animation: antena 4s ease-in-out infinite; }
+.tele-antena::after { content: ''; position: absolute; bottom: -6px; left: 50%; width: 34px; height: 14px; margin-left: -15px; background: #3a2a1d; border-radius: 16px 16px 4px 4px; }
+@keyframes antena { 50% { transform: rotate(18deg); } }
+.tele-cuerpo {
+  display: grid; grid-template-columns: 1fr 52px; gap: 12px; width: 100%; padding: 14px;
+  background: linear-gradient(160deg, #8a5a33, #5a3a22 55%, #3e2716);
+  border-radius: 22px; box-shadow: inset 0 2px 0 rgba(255,255,255,.18), inset 0 -4px 0 rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.55);
+}
+.tele-pantalla {
+  position: relative; aspect-ratio: 4 / 3; overflow: hidden; display: block;
+  border-radius: 18% / 22%; background: radial-gradient(ellipse at 50% 45%, #233a2c, #0b140f 75%);
+  box-shadow: inset 0 0 0 6px #1d1410, inset 0 0 30px rgba(0,0,0,.9), 0 0 0 3px #2b1d14;
+}
+.tele-contenido {
+  position: absolute; inset: 9% 9%; display: grid; align-content: center; gap: 4px; text-align: center;
+  color: #e7ffe9; text-shadow: 0 0 6px rgba(140, 255, 170, .65), 0 0 1px #fff; z-index: 1;
+}
+.tele-titulo { font-family: var(--fuente-titulo); font-size: clamp(1.05rem, 4.6vw, 1.35rem); letter-spacing: .08em; color: var(--vela); text-shadow: 0 0 8px rgba(242, 165, 65, .7); }
+.tele-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.tele-lista li { display: grid; grid-template-columns: 1.6em 1fr auto; align-items: center; gap: 6px; font-size: clamp(.78rem, 3.4vw, .95rem); text-align: left; }
+.tele-lista b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.tele-lista em { font-style: normal; font-family: ui-monospace, 'Courier New', monospace; font-weight: 700; color: #b8ffcb; }
+.tele-vacio { font-family: var(--fuente-titulo); font-size: 1.4rem; letter-spacing: .1em; }
+.tele-demo { position: absolute; bottom: -4px; right: 0; font-size: .55rem; font-weight: 800; letter-spacing: .15em; color: #ff8ac4; text-shadow: none; }
+.tele-ruido { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; mix-blend-mode: screen; opacity: .07; z-index: 2; pointer-events: none; }
+.tele-lineas { position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px),
+              radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%); }
+.tele-lineas::after { content: ''; position: absolute; left: 0; right: 0; height: 30%; top: -30%; background: linear-gradient(transparent, rgba(255,255,255,.06), transparent); animation: barrido 5s linear infinite; }
+@keyframes barrido { to { top: 110%; } }
+.tele-canal { position: absolute; top: 9%; right: 11%; z-index: 4; font: 700 .7rem ui-monospace, monospace; color: #9dffb4; text-shadow: 0 0 4px #5f5; }
+.tele-mandos { display: grid; align-content: start; justify-items: center; gap: 12px; padding-top: 6px; }
+.tele-mandos .rueda { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #e8d5b5, #8b7355 60%, #4a3a28); box-shadow: 0 3px 0 rgba(0,0,0,.4); position: relative; }
+.tele-mandos .rueda::after { content: ''; position: absolute; left: 50%; top: 4px; width: 3px; height: 10px; margin-left: -1.5px; background: #3a2a1d; border-radius: 2px; }
+.tele-mandos .rueda + .rueda { transform: rotate(60deg); }
+.tele-mandos .rejilla { width: 38px; height: 50px; border-radius: 6px; background: repeating-linear-gradient(0deg, #2a1d14 0 3px, #6e4a2c 3px 6px); }
+.tele-patas { display: flex; justify-content: space-between; width: 70%; }
+.tele-patas i { width: 12px; height: 16px; background: #2b1d14; border-radius: 0 0 4px 4px; }
+.tele.estatica .tele-contenido { opacity: 0; }
+.tele.estatica .tele-pantalla { animation: rodar-v .52s steps(4) 1; }
+.tele.fallo .tele-contenido { animation: fallo .2s steps(2) infinite; }
+@keyframes fallo {
+  0% { transform: translateX(-4px) skewX(6deg); text-shadow: -3px 0 #ff2d6f, 3px 0 #2cf5ff; }
+  100% { transform: translateX(3px) skewX(-4deg); text-shadow: 3px 0 #ff2d6f, -3px 0 #2cf5ff; clip-path: inset(10% 0 20% 0); }
+}
+@keyframes rodar-v { 0% { filter: brightness(2.2); } 100% { filter: none; } }
+.tele:hover .tele-cuerpo { transform: translateY(-2px); }
+.tele-cuerpo { transition: transform .2s; }
+@media (prefers-reduced-motion: reduce) { .tele-lineas::after, .tele-antena i { animation: none; } }

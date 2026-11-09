@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "description": "Solo herramientas de desarrollo (la web no necesita compilación)",
+  "scripts": {
+    "semilla": "node scripts/generar-semilla.mjs",
+    "portadas": "node scripts/portadas.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.48.0",
+    "sharp": "^0.33.5"
+  }
+}

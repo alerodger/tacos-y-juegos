@@ -42,7 +42,7 @@ Base de datos, inicio de sesión y fotos en Supabase (cuenta nueva, que se entre
       mes), top 15, posición propia aunque no se esté en el top, escalas de puntos igualadas
       (~1.000–1.500 por buena partida), tope por juego, modo "mejor partida de cada juego" o
       "todas las partidas" (elige el dueño), modo DEMO sin Supabase
-- [ ] **B. Salón de juegos**: jugadores y casilla de juegos de beber antes de elegir (los juegos
+- [x] **B. Salón de juegos**: jugadores y casilla de juegos de beber antes de elegir (los juegos
       que no encajan bajan y se ponen grises), tarjetas con vista previa tipo CrazyGames, nombres
       más atractivos, top 3 en una tele antigua con interferencias, juego del Impostor
 - [ ] **C. Portada**: botones fijos (carta, juegos, Instagram), botón de jugar que tiembla, notas de
