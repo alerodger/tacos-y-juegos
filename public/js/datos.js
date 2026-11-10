@@ -131,7 +131,8 @@ CE.horario = {
 };
 
 // Botones fijos en pantalla: carta, juegos e Instagram (barra abajo en móvil, columna en escritorio)
-CE.botonesFijos = ({ carta, juegos, instagram }) => {
+// ocultarCon: elemento con botones equivalentes (p. ej. los de la portada); mientras se vea, la barra se esconde
+CE.botonesFijos = ({ carta, juegos, instagram, ocultarCon }) => {
   if (document.querySelector('.fijos')) return;
   const nav = document.createElement('nav');
   nav.className = 'fijos';
@@ -146,4 +147,12 @@ CE.botonesFijos = ({ carta, juegos, instagram }) => {
   document.addEventListener('idioma', pintar);
   document.body.appendChild(nav);
   document.body.classList.add('con-fijos');
+  if (ocultarCon && 'IntersectionObserver' in window) {
+    const poner = (oculta) => {
+      nav.classList.toggle('escondida', oculta);
+      nav.toggleAttribute('inert', oculta); // sin foco ni clics mientras está escondida
+    };
+    poner(true);
+    new IntersectionObserver(([e]) => poner(e.isIntersecting), { threshold: 0 }).observe(ocultarCon);
+  }
 };

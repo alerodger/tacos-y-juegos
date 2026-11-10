@@ -206,7 +206,7 @@
   CE.ajustes = a;
   CE.tele($('[data-tele]'), { enlace: 'juegos/?ranking' });
   CE.baile($('[data-baile]'));
-  CE.botonesFijos({ carta: '#carta', juegos: 'juegos/', instagram: a.instagram });
+  CE.botonesFijos({ carta: '#carta', juegos: 'juegos/', instagram: a.instagram, ocultarCon: $('.hero-botones') });
   document.addEventListener('idioma', pintarTodo);
   CE.aplicarIdioma(); // aplica textos y dispara pintarTodo
 

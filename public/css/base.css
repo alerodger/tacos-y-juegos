@@ -161,3 +161,7 @@ h1, h2 { font-family: var(--fuente-titulo); font-weight: 400; letter-spacing: .0
   .fijos a.juegos { background: var(--rojo); }
   .fijos a.juegos b { max-width: 140px; }
 }
+.fijos { transition: transform .35s ease, opacity .35s ease; }
+.fijos.escondida { transform: translateY(140%); opacity: 0; pointer-events: none; }
+@media (min-width: 761px) { .fijos.escondida { transform: translateX(140%); } }
+@media (prefers-reduced-motion: reduce) { .fijos { transition: none; } }
