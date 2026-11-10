@@ -165,3 +165,7 @@ h1, h2 { font-family: var(--fuente-titulo); font-weight: 400; letter-spacing: .0
 .fijos.escondida { transform: translateY(140%); opacity: 0; pointer-events: none; }
 @media (min-width: 761px) { .fijos.escondida { transform: translateX(140%); } }
 @media (prefers-reduced-motion: reduce) { .fijos { transition: none; } }
+.ig-icono { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 28%; flex: 0 0 auto;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.ig-icono svg { width: 70%; height: 70%; }
+.fijos .ig-icono { font-size: 1.05rem; }

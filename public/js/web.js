@@ -38,6 +38,7 @@
   $$('[data-maps]').forEach((el) => { el.href = a.maps_url; });
   $$('[data-instagram]').forEach((el) => { el.href = `https://www.instagram.com/${a.instagram}/`; });
   $$('[data-instagram-usuario]').forEach((el) => { el.textContent = `@${a.instagram}`; });
+  $$('[data-ig-icono]').forEach((el) => { el.outerHTML = CE.iconoInstagram(); });
   $('[data-direccion]').innerHTML = `${esc(a.direccion)}<br>${esc(a.cp_ciudad)}`;
   const tel = $('[data-telefono]');
   tel.textContent = `📞 ${a.telefono}`;

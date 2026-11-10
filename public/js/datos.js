@@ -131,6 +131,10 @@ CE.horario = {
 };
 
 // Botones fijos en pantalla: carta, juegos e Instagram (barra abajo en móvil, columna en escritorio)
+// Icono de Instagram (glifo en blanco sobre el degradado de la marca)
+CE.iconoInstagram = () => `<span class="ig-icono" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+  <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="#fff" stroke="none"/></svg></span>`;
+
 // ocultarCon: elemento con botones equivalentes (p. ej. los de la portada); mientras se vea, la barra se esconde
 CE.botonesFijos = ({ carta, juegos, instagram, ocultarCon }) => {
   if (document.querySelector('.fijos')) return;
@@ -141,7 +145,7 @@ CE.botonesFijos = ({ carta, juegos, instagram, ocultarCon }) => {
     nav.innerHTML = `
       <a href="${carta}"><span aria-hidden="true">🌮</span><b>${CE.t('nav.carta')}</b></a>
       <a href="${juegos}" class="juegos"><span aria-hidden="true">🎲</span><b>${CE.t('nav.juegos')}</b></a>
-      ${instagram ? `<a href="https://www.instagram.com/${CE.esc(instagram)}/" target="_blank" rel="noopener"><span aria-hidden="true">📷</span><b>Instagram</b></a>` : ''}`;
+      ${instagram ? `<a href="https://www.instagram.com/${CE.esc(instagram)}/" target="_blank" rel="noopener">${CE.iconoInstagram()}<b>Instagram</b></a>` : ''}`;
   };
   pintar();
   document.addEventListener('idioma', pintar);
